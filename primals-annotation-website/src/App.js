@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import data from './data.json'; // Import the JSON data
-
+import './App.css';
+import Label from './Label';
 function App() {
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -15,29 +16,26 @@ function App() {
         <p>{data.content}</p>
       </header>
       <main>
-        <div>
-          <label>
-            <input
-              type="radio"
-              value="good"
-              checked={selectedOption === "good"}
-              onChange={() => handleOptionChange("good")}
-            />
-            Good
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="bad"
-              checked={selectedOption === "bad"}
-              onChange={() => handleOptionChange("bad")}
-            />
-            Bad
-          </label>
+      <div id = "header">
+          <Label primal = {"good"} selectedOption = {selectedOption} handleOptionChange={handleOptionChange}/>
+          <Label primal = {"bad"} selectedOption = {selectedOption} handleOptionChange={handleOptionChange}/>
         </div>
-        <div>
-          <h2>Tree Structure</h2>
-          {/* Tree structure goes here */}
+        <br></br>
+        <div id = "options">
+          <div id = "col1">
+            <ul>
+              <li id = "primalOptions">
+                <Label primal = {"safe"} selectedOption = {selectedOption} handleOptionChange={handleOptionChange}/>
+                <Label primal = {"dangerous"} selectedOption = {selectedOption} handleOptionChange={handleOptionChange}/>
+              </li>
+            </ul>
+          </div>
+          <div id = "col2">
+
+          </div>
+          <div id = "col3">
+
+          </div>
         </div>
       </main>
     </div>
