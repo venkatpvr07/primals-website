@@ -1,11 +1,20 @@
 // App.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css'; // Import CSS file for styling
 
 function App() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [additionalOptions, setAdditionalOptions] = useState([false, false, false]);
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [text, setText] = useState('');
+
+  // Load text content from the JSON file
+  useEffect(() => {
+    fetch('/dataset.json')
+      .then(response => response.json())
+      .then(data => setText(data.text))
+      .catch(error => console.error('Error loading text content:', error));
+  }, []);
 
   const handleOptionChange = (option) => {
     setSelectedOption(option);
@@ -33,6 +42,13 @@ function App() {
 
   return (
     <div>
+     <textarea
+          className="text-box"
+          placeholder="Type your text here..."
+          rows="10"
+          value={text} // Set the value of the text box
+          readOnly // Make the text box read-only
+        />
       <header>
         {/* <h1>{data.title}</h1>
         <p>{data.content}</p> */}
@@ -92,6 +108,7 @@ function App() {
                   type="checkbox"
                   checked={additionalOptions[2]}
                   onChange={() => handleAdditionalOptionChange(2)}
+                  disabled={additionalOptions.length >= 2 && !additionalOptions.includes(additionalOptions[2])}
                 />
                 Alive
               </label>
