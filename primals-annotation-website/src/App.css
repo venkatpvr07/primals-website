@@ -15,7 +15,7 @@
 }
 
 .additional-option-container {
-  margin-right: 20px;
+  margin-right: 40px; /* Increase the margin for more space */
 }
 
 .folder {
@@ -34,3 +34,13 @@
 }
 
 /* Additional CSS for styling as needed */
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; /* Add space */
+}
+
+.footer-button {
+  margin: 0 50px; /* Add space between buttons */
+}
