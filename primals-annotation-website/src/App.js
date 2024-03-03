@@ -25,22 +25,16 @@ function App() {
   };
 
   const handleAdditionalOptionChange = (index) => {
-    const updatedOptions = [...additionalOptions];
-    updatedOptions[index] = !updatedOptions[index];
-    const numSelected = updatedOptions.filter(option => option).length;
-    if (numSelected > 1) {
-      updatedOptions[index] = !updatedOptions[index];
-    }
+    const updatedOptions = [false, false, false];
+    updatedOptions[index] = true;
     setAdditionalOptions(updatedOptions);
-  };
+  };  
+  
 
   const handleTreeOptionChange = (option) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter(item => item !== option));
-    } else if (selectedOptions.length < 1) {
-      setSelectedOptions([...selectedOptions, option]);
-    }
+    setSelectedOptions([option]);
   };
+  
 
   const handleSaveAndExit = () => {
     // Perform action only if one option and one additional option are selected
@@ -278,8 +272,9 @@ function Tree({ option, folder, selectedOptions, onSelect, selectedOption }) {
                   checked={selectedOptions.includes(option)}
                   onChange={() => handleOptionChange(option)}
                   disabled={isOptionDisabled(folder)}
+        
                 />
-                {option}
+                <span className={isOptionDisabled(folder) ? "disabled-text" : ""}>{option}</span>
               </label>
               {/* Render corresponding options from folders 4, 5, and 6 */}
               {(folder === "folder1" || folder === "folder2" || folder === "folder3") && (
@@ -290,7 +285,7 @@ function Tree({ option, folder, selectedOptions, onSelect, selectedOption }) {
                     checked={false} // Always unchecked
                     disabled // Always disabled
                   />
-                  {treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]} {/* Display corresponding option */}
+                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}</span> {/* Display corresponding option */}
                 </label>
               )}
               {(folder === "folder4" || folder === "folder5" || folder === "folder6") && (
@@ -301,7 +296,7 @@ function Tree({ option, folder, selectedOptions, onSelect, selectedOption }) {
                     checked={false} // Always unchecked
                     disabled // Always disabled
                   />
-                  {treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]} {/* Display corresponding option */}
+                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}</span> {/* Display corresponding option */}
                 </label>
               )}
             </li>

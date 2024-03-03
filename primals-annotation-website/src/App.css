@@ -44,3 +44,7 @@
 .footer-button {
   margin: 0 50px; /* Add space between buttons */
 }
+
+.disabled-text {
+  color: #888; /* Use gray color for disabled text */
+}
