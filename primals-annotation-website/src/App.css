@@ -5,6 +5,12 @@
   resize: vertical; /* Allow vertical resizing */
 }
 
+.toplevel {
+  display: flex; 
+	justify-content: center; 
+	align-items: center;
+}
+
 .level-container {
   display: flex;
   margin-bottom: 20px;
@@ -47,4 +53,42 @@
 
 .disabled-text {
   color: #888; /* Use gray color for disabled text */
+}
+
+.container {
+  display: flex;
+  justify-content: flex-end; /* Align container to the right */
+}
+
+.navbar {
+  flex: 0 0 auto;
+  width: 200px; /* Adjust as needed */
+  background-color: #f0f0f0; /* Background color of the navbar */
+  border: 1px solid #ddd; /* Border around the navbar */
+  padding: 10px; /* Padding inside the navbar */
+  display: flex;
+}
+
+.content {
+  flex: 1;
+  padding: 10px; /* Add padding to separate content from navbar */
+}
+
+.navbar ul {
+  list-style-type: none; /* Remove bullet points from the list */
+  padding: 0; /* Remove default padding */
+}
+
+.navbar li {
+  margin-bottom: 10px; /* Add space between navbar items */
+}
+
+/* .navbar a {
+  text-decoration: none; /* Remove underline from links */
+  /* color: #333; Link color */
+  /* display: block; Make links block-level for full width */
+/* } */ 
+
+.navbar a:hover {
+  background-color: #ddd; /* Background color on hover */
 }

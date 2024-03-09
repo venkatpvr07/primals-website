@@ -1,3 +1,13 @@
 {
-  "text": "i am excited to see how this futuristic book talks about the pros and cons of ai."
+  "pages": [
+    {
+      "content": "Text for page 1"
+    },
+    {
+      "content": "Text for page 2"
+    },
+    {
+      "content": "Text for page 3"
+    }
+  ]
 }
