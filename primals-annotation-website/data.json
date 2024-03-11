@@ -1,26 +1,46 @@
 [
-  {
-    "page": 1,
-    "options": [
-      "Good",
-      "Safe",
-      "Stable"
-    ]
-  },
+  {},
   {
     "page": 2,
     "options": [
-      "Good",
-      "Enticing",
-      "Meaningful"
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Pleasurable"
+      },
+      {
+        "options": [
+          null,
+          "Bad"
+        ],
+        "additionalOptions": "Dull",
+        "selectedOption": "Miserable"
+      }
+    ]
+  },
+  {
+    "page": 1,
+    "options": [
+      {
+        "options": [
+          "Bad"
+        ],
+        "additionalOptions": "Dangerous"
+      }
     ]
   },
   {
     "page": 3,
     "options": [
-      "Good",
-      "Alive",
-      "Needs Me"
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Regenerative"
+      }
     ]
   }
 ]

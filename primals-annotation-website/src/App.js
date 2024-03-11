@@ -1,58 +1,166 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'; // Import CSS file for styling
 
-function App() {
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [additionalOptions, setAdditionalOptions] = useState(null);
+function RadioButtonsGroup({ options, selectedOption, onChange }) {
+  return (
+    <div className="radio-buttons-group">
+      {options.map(option => (
+        <label key={option}>
+          <input
+            type="radio"
+            value={option}
+            checked={selectedOption === option}
+            onChange={() => onChange(option)}
+          />
+          {option}
+        </label>
+      ))}
+    </div>
+  );
+}
+
+function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [text, setText] = useState('');
+  const [additionalOptions, setAdditionalOptions] = useState(null);
+  const [selectedOption, setSelectedOption] = useState([]);
+
+  useEffect(() => {
+    setSelectedOptions([]);
+    setAdditionalOptions(null);
+    setSelectedOption([]);
+  }, [currentPage]);
+
+  useEffect(() => {
+    onOptionChange(selectedOptions, index);
+    onAdditionalOptionChange(additionalOptions, index);
+  }, [selectedOptions, additionalOptions, index, onOptionChange, onAdditionalOptionChange]);
+
+  const handleTreeOptionChange = (option) => {
+    setSelectedOption([option]);
+    onTreeOptionChange(option, index);
+  };
+
+  return (
+    <div>
+      <RadioButtonsGroup
+        options={["Good", "Bad"]}
+        selectedOption={selectedOptions[index]}
+        onChange={(option) => setSelectedOptions(prevOptions => {
+          const updatedOptions = [...prevOptions];
+          updatedOptions[index] = option;
+          return updatedOptions;
+        })}
+      />
+      <div className="additional-options-container">
+        {selectedOptions[index] === "Good" && (
+          <>
+            <RadioButtonsGroup
+              options={["Safe", "Enticing", "Alive"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
+            <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+          </>
+        )}
+        {selectedOptions[index] === "Bad" && (
+          <>
+            <RadioButtonsGroup
+              options={["Dangerous", "Dull", "Mechanistic"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
+            <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+
+function App() {
+  const [optionSets, setOptionSets] = useState([0]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageData, setPageData] = useState([]);
-  const [pageOptions, setPageOptions] = useState({});
-  const [isDuplicateClicked, setIsDuplicateClicked] = useState(false); // New state for tracking duplicate click
+  const [text, setText] = useState('');
 
-  // Load text content from the JSON file
   useEffect(() => {
     fetch('/dataset.json')
       .then(response => response.json())
       .then(data => {
-        setText(data.pages[currentPage - 1].content);
         setTotalPages(data.pages.length);
         setPageData(data.pages);
+        setText(data.pages[currentPage - 1].content);
       })
       .catch(error => console.error('Error loading text content:', error));
   }, [currentPage]);
 
-  const handleOptionChange = (option) => {
-    setSelectedOption(option);
-    setSelectedOptions([]);
-    setAdditionalOptions(null); // Reset additional options
+  const handleOptionChange = (options, index) => {
+    setOptionSets(prevOptionSets => {
+      const updatedOptionSets = [...prevOptionSets];
+      updatedOptionSets[index] = { ...updatedOptionSets[index], options };
+      return updatedOptionSets;
+    });
   };
 
-  const handleAdditionalOptionChange = (option) => {
-    setAdditionalOptions(option);
-  };  
-
-  const handleTreeOptionChange = (option) => {
-    setSelectedOptions([option]);
+  const handleAdditionalOptionChange = (additionalOptions, index) => {
+    setOptionSets(prevOptionSets => {
+      const updatedOptionSets = [...prevOptionSets];
+      updatedOptionSets[index] = { ...updatedOptionSets[index], additionalOptions };
+      return updatedOptionSets;
+    });
   };
 
-  const handleSaveAndExit = () => {
-    // Perform action only if one option and one additional option are selected
-    if (selectedOption && selectedOptions.length === 1 && additionalOptions) {
-      // Action logic here
+  const handleTreeOptionChange = (selectedOption, index) => {
+    setOptionSets(prevOptionSets => {
+      const updatedOptionSets = [...prevOptionSets];
+      updatedOptionSets[index] = { ...updatedOptionSets[index], selectedOption };
+      return updatedOptionSets;
+    });
+  };
+
+  const handleDuplicateOptions = () => {
+    // Check if the current number of option sets is less than 3 before adding a new duplicate
+    if (optionSets.length < 2) {
+      setOptionSets(prevOptionSets => {
+        const lastOptionSet = prevOptionSets[prevOptionSets.length - 1];
+        const newOptionSets = [...prevOptionSets, { ...lastOptionSet }];
+        return newOptionSets;
+      });
+    } else {
+      console.log("Maximum number of duplicate copies reached.");
     }
   };
+  
 
   const handleSaveAnnotations = async () => {
-    // Combine selected option, selected additional option label, and additional options
-    const allOptions = [selectedOption, additionalOptions, ...selectedOptions];
+    // Check if one option, one additionalOption, and one treeOption are selected for each option set
+    for (const optionSet of optionSets) {
+      if (
+        optionSet.options.length < 1 ||
+        !optionSet.additionalOptions ||
+        optionSet.selectedOption.length < 1
+      ) {
+        console.log("Please select one option, one additionalOption, and one treeOption for each option set before saving annotations.");
+        return;
+      }
+    }
+  
+    // Filter out null values from optionSets
+    const currentPageOptions = optionSets
+      .slice(0, pageData.length)
+      .filter(options => options !== null);
+    
     const dataToSave = {
       page: currentPage,
-      options: allOptions
+      options: currentPageOptions,
     };
-  
+    
     try {
       // Send the data to the server
       const response = await fetch('http://localhost:4000/save', {
@@ -62,7 +170,7 @@ function App() {
         },
         body: JSON.stringify(dataToSave),
       });
-  
+    
       if (response.ok) {
         console.log('Data saved successfully');
       } else {
@@ -72,7 +180,7 @@ function App() {
       console.error('Error saving data:', error);
     }
   };
-  
+
   const handleNext = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -85,341 +193,41 @@ function App() {
     }
   };
 
-  // Function to duplicate options
-  const handleDuplicateOptions = () => {
-    setIsDuplicateClicked(true); // Set the flag to true
-  };
-
   return (
     <div className="app-container">
-      <textarea
-        className="text-box"
-        placeholder="Type your text here..."
-        rows="5"
-        value={text} // Set the value of the text box
-        readOnly // Make the text box read-only
-      />
-      <header>
-        {/* <h1>{data.title}</h1>
-        <p>{data.content}</p> */}
-      </header>
-      <main>
-        <div className='toplevel'>
-          <label>
-            <input
-              type="radio"
-              value="Good"
-              checked={selectedOption === "Good"}
-              onChange={() => handleOptionChange("Good")}
-            />
-            Good
-          </label>
-          <label>
-            <input
-              type="radio"
-              value="Bad"
-              checked={selectedOption === "Bad"}
-              onChange={() => handleOptionChange("Bad")}
-            />
-            Bad
-          </label>
-        </div>
-        {!isDuplicateClicked && ( // Render only if duplicate button is not clicked
-          <div className="additional-options-container">
-            {selectedOption === "Good" && (
-              <>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Safe"}
-                      onChange={() => handleAdditionalOptionChange("Safe")}
-                    />
-                    Safe
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Dangerous
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder1" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Enticing"}
-                      onChange={() => handleAdditionalOptionChange("Enticing")}
-                    />
-                    Enticing
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Dull
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder2" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Alive"}
-                      onChange={() => handleAdditionalOptionChange("Alive")}
-                    />
-                    Alive
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Mechanistic
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder3" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-              </>
-            )}
-            {selectedOption === "Bad" && (
-              <>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Dangerous"}
-                      onChange={() => handleAdditionalOptionChange("Dangerous")}
-                    />
-                    Dangerous
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Safe
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder4" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Dull"}
-                      onChange={() => handleAdditionalOptionChange("Dull")}
-                    />
-                    Dull
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Enticing
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder5" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Mechanistic"}
-                      onChange={() => handleAdditionalOptionChange("Mechanistic")}
-                    />
-                    Mechanistic
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Alive
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder6" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-              </>
-            )}
-          </div>
-        )}
-        {/* Render duplicated options */}
-        {isDuplicateClicked && (
-          <div className="additional-options-container">
-            {selectedOption === "Good" && (
-              <>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Safe"}
-                      onChange={() => handleAdditionalOptionChange("Safe")}
-                    />
-                    Safe
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Dangerous
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder1" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Enticing"}
-                      onChange={() => handleAdditionalOptionChange("Enticing")}
-                    />
-                    Enticing
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Dull
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder2" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Alive"}
-                      onChange={() => handleAdditionalOptionChange("Alive")}
-                    />
-                    Alive
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Mechanistic
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder3" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-              </>
-            )}
-            {selectedOption === "Bad" && (
-              <>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Dangerous"}
-                      onChange={() => handleAdditionalOptionChange("Dangerous")}
-                    />
-                    Dangerous
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Safe
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder4" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Dull"}
-                      onChange={() => handleAdditionalOptionChange("Dull")}
-                    />
-                    Dull
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Enticing
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder5" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-                <div className="additional-option-container">
-                  <label>
-                    <input
-                      type="radio"
-                      checked={additionalOptions === "Mechanistic"}
-                      onChange={() => handleAdditionalOptionChange("Mechanistic")}
-                    />
-                    Mechanistic
-                  </label>
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Alive
-                    </span>
-                  </label>
-                  <Tree option={selectedOption} folder="folder6" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </main>
-      <footer className="footer">
-        <button className="footer-button" onClick={handleSaveAndExit}>Save and Exit</button>
-        <button className="footer-button" onClick={handleSaveAnnotations}>Save Annotations</button>
-        <button className="footer-button" onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
-        <span className="page-info">Page {currentPage} of {totalPages}</span>
-        <button className="footer-button" onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
-        <button className="footer-button" onClick={handleDuplicateOptions} disabled={isDuplicateClicked}>Duplicate Options</button>
-      </footer>
-      <div className="container">
-        <nav className="navbar">
-          <ul>
-            {pageData.map((page, index) => (
-              <li key={index}><a href="#" onClick={() => setCurrentPage(index + 1)}>Page {index + 1}</a></li>
-            ))}
-          </ul>
-        </nav>
+      <div className="main-content">
+        {optionSets.map((_, index) => (
+          <OptionSet
+            key={index}
+            index={index}
+            onOptionChange={handleOptionChange}
+            onAdditionalOptionChange={handleAdditionalOptionChange}
+            onTreeOptionChange={handleTreeOptionChange}
+            currentPage={currentPage} // Pass currentPage to OptionSet
+          />
+        ))}
+        <footer className="footer">
+          <button className="footer-button" onClick={handleDuplicateOptions}>Duplicate Options</button>
+          <button className="footer-button" onClick={handleSaveAnnotations}>Save Annotations</button>
+        </footer>
       </div>
-      {/* <button onClick={downloadPageOptions}>Download Page Options</button> */}
+      <div className="navigation">
+        <button onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
+        <span className="page-info">Page {currentPage} of {totalPages}</span>
+        <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
+      </div>
+      <div className="navbar">
+        <ul>
+          {pageData.map((page, index) => (
+            <li key={index}><button onClick={() => setCurrentPage(index + 1)}>Page {index + 1}</button></li>
+          ))}
+        </ul>
+      </div>
+      <textarea
+        rows="5"
+        value={text}
+        readOnly
+      />
     </div>
   );
 }

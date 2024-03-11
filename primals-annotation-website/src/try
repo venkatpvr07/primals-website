@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; // Import CSS file for styling
 
 function App() {
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [additionalOptions, setAdditionalOptions] = useState(null);
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [additionalOptions, setAdditionalOptions] = useState(null);
+  const [selectedOption, setSelectedOption] = useState([]);
   const [text, setText] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageData, setPageData] = useState([]);
-  const [pageOptions, setPageOptions] = useState({});
   const [duplicateCount, setDuplicateCount] = useState(1); // New state to track duplicate count
 
   // Load text content from the JSON file
@@ -30,20 +29,6 @@ function App() {
     }
   }, [duplicateCount]);
 
-  const handleOptionChange = (option) => {
-    setSelectedOption(option);
-    setSelectedOptions([]);
-    setAdditionalOptions(null); // Reset additional options
-  };
-
-  const handleAdditionalOptionChange = (option) => {
-    setAdditionalOptions(option);
-  };  
-
-  const handleTreeOptionChange = (option) => {
-    setSelectedOptions([option]);
-  };
-
   const handleSaveAndExit = () => {
     // Perform action only if one option and one additional option are selected
     if (selectedOption && selectedOptions.length === 1 && additionalOptions) {
@@ -53,7 +38,7 @@ function App() {
 
   const handleSaveAnnotations = async () => {
     // Combine selected option, selected additional option label, and additional options
-    const allOptions = [selectedOption, additionalOptions, ...selectedOptions];
+    const allOptions = [selectedOptions, additionalOptions, ...selectedOption];
     const dataToSave = {
       page: currentPage,
       options: allOptions
@@ -91,10 +76,24 @@ function App() {
     }
   };
 
+  const handleAdditionalOptionChange = (option) => {
+    setAdditionalOptions(option);
+  };
+  
+  const handleOptionChange = (option) => {
+    setSelectedOption(option);
+    setSelectedOptions([]);
+    setAdditionalOptions(null); // Reset additional options
+  };
+
+  const handleTreeOptionChange = (option) => {
+    setSelectedOption([option]);
+  };
+  
   // Function to duplicate options
   const handleDuplicateOptions = () => {
     setDuplicateCount(2); // Set the duplicate count to 2 when the button is clicked
-  };  
+  };
 
   return (
     <div className="app-container">
@@ -117,8 +116,12 @@ function App() {
                 <input
                   type="radio"
                   value="Good"
-                  checked={selectedOption === "Good"}
-                  onChange={() => handleOptionChange("Good")}
+                  checked={selectedOptions[index] === "Good"}
+                  onChange={() => setSelectedOptions(prevOptions => {
+                    const updatedOptions = [...prevOptions];
+                    updatedOptions[index] = "Good";
+                    return updatedOptions;
+                  })}
                 />
                 Good
               </label>
@@ -126,92 +129,179 @@ function App() {
                 <input
                   type="radio"
                   value="Bad"
-                  checked={selectedOption === "Bad"}
-                  onChange={() => handleOptionChange("Bad")}
+                  checked={selectedOptions[index] === "Bad"}
+                  onChange={() => setSelectedOptions(prevOptions => {
+                    const updatedOptions = [...prevOptions];
+                    updatedOptions[index] = "Bad";
+                    return updatedOptions;
+                  })}
                 />
                 Bad
               </label>
             </div>
             <div className="additional-options-container">
-              {selectedOption === "Good" && (
+              {selectedOptions[index] === "Good" && (
                 <>
                   <div className="additional-option-container">
                     <label>
                       <input
                         type="radio"
+                        value="Safe"
                         checked={additionalOptions === "Safe"}
-                        onChange={() => handleAdditionalOptionChange("Safe")}
+                        onChange={() => {handleAdditionalOptionChange("Safe")}} // Add logic here
                       />
                       Safe
                     </label>
+                    <span className="disabled-text">
+                    <label>
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Dangerous
+                    </label>
+                    </span>
                     {/* Duplicate the rest of the options */}
                     {/* Tree component should handle the rendering of the options */}
-                    <Tree option={selectedOption} folder="folder1" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
+                    <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+
+
+                    
                   </div>
                   <div className="additional-option-container">
                     <label>
                       <input
                         type="radio"
+                        value="Enticing"
                         checked={additionalOptions === "Enticing"}
-                        onChange={() => handleAdditionalOptionChange("Enticing")}
+                        onChange={() => {handleAdditionalOptionChange("Enticing")}} // Add logic here
                       />
                       Enticing
                     </label>
+                    <span className="disabled-text">
+                    <label>
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Dull
+                    </label>
+                    </span>
+                    {/* Duplicate the rest of the options */}
                     {/* Tree component should handle the rendering of the options */}
-                    <Tree option={selectedOption} folder="folder2" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
+                    <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+                    
                   </div>
+
                   <div className="additional-option-container">
                     <label>
                       <input
                         type="radio"
+                        value="Alive"
                         checked={additionalOptions === "Alive"}
-                        onChange={() => handleAdditionalOptionChange("Alive")}
+                        onChange={() => {handleAdditionalOptionChange("Alive")}} // Add logic here
                       />
                       Alive
                     </label>
+                    <span className="disabled-text">
+                    <label>
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Mechanistic
+                    </label>
+                    </span>
+                    {/* Duplicate the rest of the options */}
                     {/* Tree component should handle the rendering of the options */}
-                    <Tree option={selectedOption} folder="folder3" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
+                    <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+                    
                   </div>
+
+                  {/* Add more additional options here */}
                 </>
               )}
-              {selectedOption === "Bad" && (
+              {selectedOptions[index] === "Bad" && (
                 <>
                   <div className="additional-option-container">
                     <label>
                       <input
                         type="radio"
+                        value="Dangerous"
                         checked={additionalOptions === "Dangerous"}
                         onChange={() => handleAdditionalOptionChange("Dangerous")}
                       />
                       Dangerous
                     </label>
+                    <label>
+                    <span className="disabled-text">
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Safe
+                    </span>
+                  </label>
+                    {/* Duplicate the rest of the options */}
                     {/* Tree component should handle the rendering of the options */}
-                    <Tree option={selectedOption} folder="folder4" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
+                    <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
                   </div>
+
                   <div className="additional-option-container">
                     <label>
                       <input
                         type="radio"
+                        value="Dull"
                         checked={additionalOptions === "Dull"}
                         onChange={() => handleAdditionalOptionChange("Dull")}
                       />
                       Dull
                     </label>
+                    <label>
+                    <span className="disabled-text">
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Enticing
+                    </span>
+                  </label>
+                    {/* Duplicate the rest of the options */}
                     {/* Tree component should handle the rendering of the options */}
-                    <Tree option={selectedOption} folder="folder5" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
+                    <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
                   </div>
+
                   <div className="additional-option-container">
                     <label>
                       <input
                         type="radio"
+                        value="Mechanistic"
                         checked={additionalOptions === "Mechanistic"}
                         onChange={() => handleAdditionalOptionChange("Mechanistic")}
                       />
                       Mechanistic
                     </label>
+                    <label>
+                    <span className="disabled-text">
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Alive
+                    </span>
+                  </label>
+                    {/* Duplicate the rest of the options */}
                     {/* Tree component should handle the rendering of the options */}
-                    <Tree option={selectedOption} folder="folder6" selectedOptions={selectedOptions} onSelect={handleTreeOptionChange} />
+                    <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
                   </div>
+
+                  {/* Add more additional options here */}
                 </>
               )}
             </div>
