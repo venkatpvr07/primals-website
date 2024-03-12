@@ -1,7 +1,26 @@
 [
-  {},
   {
     "page": 2,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Safe",
+        "selectedOption": "Pleasurable"
+      },
+      {
+        "options": [
+          null,
+          "Bad"
+        ],
+        "additionalOptions": "Dangerous",
+        "selectedOption": "Miserable"
+      }
+    ]
+  },
+  {
+    "page": 1,
     "options": [
       {
         "options": [
@@ -21,25 +40,22 @@
     ]
   },
   {
-    "page": 1,
-    "options": [
-      {
-        "options": [
-          "Bad"
-        ],
-        "additionalOptions": "Dangerous"
-      }
-    ]
-  },
-  {
     "page": 3,
     "options": [
       {
         "options": [
           "Good"
         ],
-        "additionalOptions": "Enticing",
-        "selectedOption": "Regenerative"
+        "additionalOptions": "Alive",
+        "selectedOption": "Intentional"
+      },
+      {
+        "options": [
+          null,
+          "Bad"
+        ],
+        "additionalOptions": "Mechanistic",
+        "selectedOption": "Unintentional"
       }
     ]
   }

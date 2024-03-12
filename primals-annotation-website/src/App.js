@@ -19,7 +19,7 @@ function RadioButtonsGroup({ options, selectedOption, onChange }) {
   );
 }
 
-function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage }) {
+function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage,resetOptions }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [additionalOptions, setAdditionalOptions] = useState(null);
   const [selectedOption, setSelectedOption] = useState([]);
@@ -28,7 +28,10 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
     setSelectedOptions([]);
     setAdditionalOptions(null);
     setSelectedOption([]);
-  }, [currentPage]);
+    if(resetOptions){
+
+    }
+  }, [currentPage, resetOptions]);
 
   useEffect(() => {
     onOptionChange(selectedOptions, index);
@@ -41,7 +44,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
   };
 
   return (
-    <div>
+    <div className='toplevel'>
       <RadioButtonsGroup
         options={["Good", "Bad"]}
         selectedOption={selectedOptions[index]}
@@ -55,10 +58,50 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
         {selectedOptions[index] === "Good" && (
           <>
             <RadioButtonsGroup
-              options={["Safe", "Enticing", "Alive"]}
+              options={["Safe"]}
               selectedOption={additionalOptions}
               onChange={setAdditionalOptions}
             />
+            <label>
+                    <span className="disabled-text">
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Dangerous
+                    </span>
+                  </label>
+                  <RadioButtonsGroup
+              options={["Enticing"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
+                  <label>
+                    <span className="disabled-text">
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Dull
+                    </span>
+                  </label>
+                  <RadioButtonsGroup
+              options={["Alive"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
+                  <label>
+                    <span className="disabled-text">
+                      <input
+                        type="radio"
+                        checked={false}
+                        disabled
+                      />
+                      Mechanistic
+                    </span>
+                  </label>
             <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
             <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
             <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
@@ -88,6 +131,7 @@ function App() {
   const [totalPages, setTotalPages] = useState(1);
   const [pageData, setPageData] = useState([]);
   const [text, setText] = useState('');
+  const [resetOptions, setResetOptions] = useState(false);
 
   useEffect(() => {
     fetch('/dataset.json')
@@ -99,6 +143,15 @@ function App() {
       })
       .catch(error => console.error('Error loading text content:', error));
   }, [currentPage]);
+
+  useEffect(()=>{
+    if(resetOptions){
+      if(optionSets.length>1){
+        setOptionSets(optionSets.splice(1,1));
+      }
+      setResetOptions(false);
+    }
+  },[resetOptions])
 
   const handleOptionChange = (options, index) => {
     setOptionSets(prevOptionSets => {
@@ -182,20 +235,32 @@ function App() {
   };
 
   const handleNext = () => {
+    resetPageOptions();
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
 
   const handlePrev = () => {
+    resetPageOptions();
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
   };
 
+  const resetPageOptions = () =>{
+     setResetOptions(true);
+  }
+
   return (
     <div className="app-container">
       <div className="main-content">
+        <textarea
+          className='text-box'
+          rows="5"
+          value={text}
+          readOnly
+        />
         {optionSets.map((_, index) => (
           <OptionSet
             key={index}
@@ -203,7 +268,8 @@ function App() {
             onOptionChange={handleOptionChange}
             onAdditionalOptionChange={handleAdditionalOptionChange}
             onTreeOptionChange={handleTreeOptionChange}
-            currentPage={currentPage} // Pass currentPage to OptionSet
+            currentPage={currentPage}
+            resetOptions = {resetOptions} // Pass currentPage to OptionSet
           />
         ))}
         <footer className="footer">
@@ -223,11 +289,6 @@ function App() {
           ))}
         </ul>
       </div>
-      <textarea
-        rows="5"
-        value={text}
-        readOnly
-      />
     </div>
   );
 }
