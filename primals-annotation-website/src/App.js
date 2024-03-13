@@ -3,7 +3,7 @@ import './App.css'; // Import CSS file for styling
 
 function RadioButtonsGroup({ options, selectedOption, onChange }) {
   return (
-    <div className="radio-buttons-group">
+    <span className="radio-buttons-group">
       {options.map(option => (
         <label key={option}>
           <input
@@ -15,7 +15,7 @@ function RadioButtonsGroup({ options, selectedOption, onChange }) {
           {option}
         </label>
       ))}
-    </div>
+    </span>
   );
 }
 
@@ -36,6 +36,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
   useEffect(() => {
     onOptionChange(selectedOptions, index);
     onAdditionalOptionChange(additionalOptions, index);
+    onTreeOptionChange(selectedOption, index);
   }, [selectedOptions, additionalOptions, index, onOptionChange, onAdditionalOptionChange]);
 
   const handleTreeOptionChange = (option) => {
@@ -59,6 +60,8 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
       <div className="additional-options-container">
         {selectedOptions[index] === "Good" && (
           <>
+          <div id = "flex-col">
+            <div>
             <RadioButtonsGroup
               options={["Safe"]}
               selectedOption={additionalOptions}
@@ -74,8 +77,13 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Dangerous
             </span>
             </label>
+            </div>
             <Tree className = 'something' option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
-                  <RadioButtonsGroup
+          </div>
+            
+            <div id = "flex-col">
+              <div>
+            <RadioButtonsGroup
               options={["Enticing"]}
               selectedOption={additionalOptions}
               onChange={setAdditionalOptions}
@@ -90,8 +98,13 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Dull
             </span>
             </label>
+            </div>
             <Tree className = 'something' option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
-                  <RadioButtonsGroup
+            </div>
+            
+            <div id = "flex-col">
+            <div>
+            <RadioButtonsGroup
               options={["Alive"]}
               selectedOption={additionalOptions}
               onChange={setAdditionalOptions}
@@ -106,11 +119,15 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Mechanistic
             </span>
             </label>
+            </div>
             <Tree className = 'something' option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            </div>
           </>
         )}
         {selectedOptions[index] === "Bad" && (
           <>
+          <div id = "flex-col">
+            <div>
             <RadioButtonsGroup
               options={["Dangerous"]}
               selectedOption={additionalOptions}
@@ -126,7 +143,12 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Safe
             </span>
             </label>
+            </div>
             <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            </div>
+
+            <div id = "flex-col">
+            <div>
             <RadioButtonsGroup
               options={["Dull"]}
               selectedOption={additionalOptions}
@@ -142,7 +164,12 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Enticing
             </span>
             </label>
+            </div>
             <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            </div>
+
+            <div id = "flex-col">
+            <div>
             <RadioButtonsGroup
               options={["Mechanistic"]}
               selectedOption={additionalOptions}
@@ -158,7 +185,9 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Alive
             </span>
             </label>
+            </div>
             <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            </div>
           </>
         )}
       </div>
@@ -235,13 +264,14 @@ function App() {
   };
   
 
-  const handleSaveAnnotations = async () => {
+  const handleSaveAnnotations = async () => {  
     // Check if one option, one additionalOption, and one treeOption are selected for each option set
     for (const optionSet of optionSets) {
+      console.log(optionSets);
       if (
         optionSet.options.length < 1 ||
         !optionSet.additionalOptions ||
-        optionSet.selectedOption.length < 1
+        optionSet.selectedOption.length<1
       ) {
         alert('Please select one primary, one secondary, and one tertiary primals before saving annotations.');
         console.log("Please select one primary, one secondary, and one tertiary primals before saving annotations.");
@@ -283,7 +313,7 @@ function App() {
     }
   };
 
-  const handleNext = async () => {
+    const handleNext = async () => {
     resetPageOptions();
     if (!savedPages.includes(currentPage)) {
       await handleSaveAnnotations(currentPage);

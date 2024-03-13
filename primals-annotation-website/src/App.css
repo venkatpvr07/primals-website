@@ -14,20 +14,6 @@
 .additional-options-container {
   display: flex;
   justify-content: center;
-}
-
-.something {
-  display: flex;
-  justify-content: center;
-  margin-left: 180px;
-}
-
-.additional-options-container {
-  margin-top: 20px;
-}
-
-.additional-options + .additional-option-container,
-.tree-container + .additional-option-container {
   margin-top: 20px;
 }
 
@@ -35,13 +21,6 @@
     display: flex; 
     justify-content: center; 
     align-items: center;
-}
-
-.tree-container {
-  width: 100%; /* Ensure full width */
-  max-width: 600px; /* Adjust maximum width as needed */
-  margin-top: 60px; /* Adjust top margin as needed */
- /* Center-align content */
 }
 
 .folder {
@@ -71,9 +50,11 @@
 }
 
 .navbar {
-  height: 200px; /* Adjust as needed */
-  max-width: 200px;
-  margin-left: auto;
+  position: fixed;
+  top: 140px; /* Adjust as needed */
+  right: 10px; /* Adjust as needed */
+  height: 325px; /* Adjust as needed */
+  width: 120px;
   background-color: #f0f0f0; /* Background color of the navbar */
   border: 1px solid #ddd; /* Border around the navbar */
   padding: 10px; /* Padding inside the navbar */

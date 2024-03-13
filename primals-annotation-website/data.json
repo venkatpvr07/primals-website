@@ -3,8 +3,11 @@
     "page": 4,
     "options": [
       {
-        "options": [],
-        "additionalOptions": null
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
       }
     ]
   },
@@ -16,7 +19,9 @@
           "Good"
         ],
         "additionalOptions": "Enticing",
-        "selectedOption": "Interesting"
+        "selectedOption": [
+          "Interesting"
+        ]
       }
     ]
   },
@@ -25,10 +30,10 @@
     "options": [
       {
         "options": [
-          "Bad"
+          "Good"
         ],
-        "additionalOptions": "Dull",
-        "selectedOption": "Boring"
+        "additionalOptions": "Alive",
+        "selectedOption": "Interesting"
       }
     ]
   },
@@ -49,18 +54,10 @@
     "options": [
       {
         "options": [
-          "Bad"
-        ],
-        "additionalOptions": "Dull",
-        "selectedOption": "Ugly"
-      },
-      {
-        "options": [
-          null,
           "Good"
         ],
-        "additionalOptions": "Alive",
-        "selectedOption": "Intentional"
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
       }
     ]
   },
@@ -71,8 +68,104 @@
         "options": [
           "Good"
         ],
-        "additionalOptions": "Alive",
-        "selectedOption": "Intentional"
+        "additionalOptions": "Enticing",
+        "selectedOption": "Beautiful"
+      }
+    ]
+  },
+  {
+    "page": 6,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 8,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 10,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 11,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 12,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Beautiful"
+      }
+    ]
+  },
+  {
+    "page": 13,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 17,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Beautiful"
+      }
+    ]
+  },
+  {
+    "page": 18,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Beautiful"
       }
     ]
   }
