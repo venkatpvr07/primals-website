@@ -11,33 +11,43 @@
 	align-items: center;
 }
 
-.level-container {
+.additional-options-container {
   display: flex;
-  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.something {
+  display: flex;
+  justify-content: center;
+  margin-left: 180px;
 }
 
 .additional-options-container {
-  display: flex;
+  margin-top: 20px;
 }
 
-.additional-option-container {
-  margin-right: 40px; /* Increase the margin for more space */
+.additional-options + .additional-option-container,
+.tree-container + .additional-option-container {
+  margin-top: 20px;
+}
+
+.tree {
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.tree-container {
+  width: 100%; /* Ensure full width */
+  max-width: 600px; /* Adjust maximum width as needed */
+  margin-top: 60px; /* Adjust top margin as needed */
+ /* Center-align content */
 }
 
 .folder {
   margin-top: 20px;
 }
 
-/* Vertical space between levels */
-.additional-options-container {
-  margin-top: 20px;
-}
-
-/* Vertical space between elements */
-.additional-options + .additional-option-container,
-.tree-container + .additional-option-container {
-  margin-top: 20px;
-}
 
 /* Additional CSS for styling as needed */
 
@@ -61,12 +71,13 @@
 }
 
 .navbar {
-  flex: 0 0 auto;
-  width: 200px; /* Adjust as needed */
+  height: 200px; /* Adjust as needed */
+  max-width: 200px;
+  margin-left: auto;
   background-color: #f0f0f0; /* Background color of the navbar */
   border: 1px solid #ddd; /* Border around the navbar */
   padding: 10px; /* Padding inside the navbar */
-  display: flex;
+  overflow-y: auto;
 }
 
 .content {

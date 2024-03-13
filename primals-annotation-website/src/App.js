@@ -44,7 +44,8 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
   };
 
   return (
-    <div className='toplevel'>
+    <>
+    <div className="toplevel">
       <RadioButtonsGroup
         options={["Good", "Bad"]}
         selectedOption={selectedOptions[index]}
@@ -54,6 +55,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
           return updatedOptions;
         })}
       />
+      </div>
       <div className="additional-options-container">
         {selectedOptions[index] === "Good" && (
           <>
@@ -63,64 +65,104 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               onChange={setAdditionalOptions}
             />
             <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Dangerous
-                    </span>
-                  </label>
+            <span className="disabled-text">
+              <input
+                type="radio"
+                checked={false}
+                disabled
+              />
+              Dangerous
+            </span>
+            </label>
+            <Tree className = 'something' option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
                   <RadioButtonsGroup
               options={["Enticing"]}
               selectedOption={additionalOptions}
               onChange={setAdditionalOptions}
             />
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Dull
-                    </span>
-                  </label>
+            <label>
+            <span className="disabled-text">
+              <input
+                type="radio"
+                checked={false}
+                disabled
+              />
+              Dull
+            </span>
+            </label>
+            <Tree className = 'something' option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
                   <RadioButtonsGroup
               options={["Alive"]}
               selectedOption={additionalOptions}
               onChange={setAdditionalOptions}
             />
-                  <label>
-                    <span className="disabled-text">
-                      <input
-                        type="radio"
-                        checked={false}
-                        disabled
-                      />
-                      Mechanistic
-                    </span>
-                  </label>
-            <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
-            <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
-            <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <label>
+            <span className="disabled-text">
+              <input
+                type="radio"
+                checked={false}
+                disabled
+              />
+              Mechanistic
+            </span>
+            </label>
+            <Tree className = 'something' option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
           </>
         )}
         {selectedOptions[index] === "Bad" && (
           <>
             <RadioButtonsGroup
-              options={["Dangerous", "Dull", "Mechanistic"]}
+              options={["Dangerous"]}
               selectedOption={additionalOptions}
               onChange={setAdditionalOptions}
             />
+            <label>
+            <span className="disabled-text">
+              <input
+                type="radio"
+                checked={false}
+                disabled
+              />
+              Safe
+            </span>
+            </label>
             <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <RadioButtonsGroup
+              options={["Dull"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
+            <label>
+            <span className="disabled-text">
+              <input
+                type="radio"
+                checked={false}
+                disabled
+              />
+              Enticing
+            </span>
+            </label>
             <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <RadioButtonsGroup
+              options={["Mechanistic"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
+            <label>
+            <span className="disabled-text">
+              <input
+                type="radio"
+                checked={false}
+                disabled
+              />
+              Alive
+            </span>
+            </label>
             <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -132,6 +174,7 @@ function App() {
   const [pageData, setPageData] = useState([]);
   const [text, setText] = useState('');
   const [resetOptions, setResetOptions] = useState(false);
+  const [savedPages, setSavedPages] = useState([]);
 
   useEffect(() => {
     fetch('/dataset.json')
@@ -186,6 +229,7 @@ function App() {
         return newOptionSets;
       });
     } else {
+      alert('Maximum number of duplicate copies reached.');
       console.log("Maximum number of duplicate copies reached.");
     }
   };
@@ -199,7 +243,8 @@ function App() {
         !optionSet.additionalOptions ||
         optionSet.selectedOption.length < 1
       ) {
-        console.log("Please select one option, one additionalOption, and one treeOption for each option set before saving annotations.");
+        alert('Please select one primary, one secondary, and one tertiary primals before saving annotations.');
+        console.log("Please select one primary, one secondary, and one tertiary primals before saving annotations.");
         return;
       }
     }
@@ -225,24 +270,36 @@ function App() {
       });
     
       if (response.ok) {
+        alert('Data saved successfully');
         console.log('Data saved successfully');
+        setSavedPages([...savedPages, currentPage]);
       } else {
+        alert('Failed to save data');
         console.error('Failed to save data:', response.statusText);
       }
     } catch (error) {
+      alert('Exception occurred. Check console for details');
       console.error('Error saving data:', error);
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     resetPageOptions();
+    if (!savedPages.includes(currentPage)) {
+      await handleSaveAnnotations(currentPage);
+    }
+
+    // Navigate to the next page if not already on the last page
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
   };
 
-  const handlePrev = () => {
+  const handlePrev = async () => {
     resetPageOptions();
+    if (!savedPages.includes(currentPage)) {
+      await handleSaveAnnotations(currentPage);
+    }
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
     }
@@ -254,13 +311,13 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="main-content">
         <textarea
           className='text-box'
           rows="5"
           value={text}
           readOnly
         />
+        <div className="main-content">
         {optionSets.map((_, index) => (
           <OptionSet
             key={index}
@@ -275,17 +332,15 @@ function App() {
         <footer className="footer">
           <button className="footer-button" onClick={handleDuplicateOptions}>Duplicate Options</button>
           <button className="footer-button" onClick={handleSaveAnnotations}>Save Annotations</button>
+          <button onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
+          <span className="page-info">Page {currentPage} of {totalPages}</span>
+          <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
         </footer>
-      </div>
-      <div className="navigation">
-        <button onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
-        <span className="page-info">Page {currentPage} of {totalPages}</span>
-        <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
       </div>
       <div className="navbar">
         <ul>
           {pageData.map((page, index) => (
-            <li key={index}><button onClick={() => setCurrentPage(index + 1)}>Page {index + 1}</button></li>
+            <li key={index}><a href='#' style={{ color: savedPages.includes(index + 1) ? 'red' : 'navy' }} onClick={() => setCurrentPage(index + 1)}>Page {index + 1}</a></li>
           ))}
         </ul>
       </div>
