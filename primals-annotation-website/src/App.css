@@ -1,6 +1,6 @@
 .text-box {
   width: calc(100% - 80px); /* Adjust the width as needed */
-  margin: 20px;
+  margin: 10px;
   padding: 10px;
   resize: vertical; /* Allow vertical resizing */
 }
@@ -9,6 +9,13 @@
   display: flex; 
 	justify-content: center; 
 	align-items: center;
+}
+
+.instructions {
+  display: flex; 
+	justify-content: center; 
+	align-items: center;
+  /* margin-top: -5px; */
 }
 
 .additional-options-container {
@@ -34,6 +41,7 @@
   display: flex;
   justify-content: center;
   margin-top: 20px; /* Add space */
+  margin-bottom: 10px;
 }
 
 .footer-button {

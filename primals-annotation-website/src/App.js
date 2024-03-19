@@ -51,6 +51,10 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
     onTreeOptionChange(selectedOption, index);
   }, [selectedOptions, additionalOptions, index, onOptionChange, onAdditionalOptionChange]);
 
+  useEffect(() => {
+    setAdditionalOptions(null);
+  }, [selectedOptions[index]])
+
   const handleTreeOptionChange = (option) => {
     setSelectedOption([option]);
     onTreeOptionChange(option, index);
