@@ -1,7 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Import CSS file for styling
+import './App.css';
 
 function RadioButtonsGroup({ options, selectedOption, onChange }) {
+
+  // const handleOptionChange = (option) => {
+  //   onChange(option);
+  //   // Set instructions based on the selected option
+  //   if (option === 'Good') {
+  //     setInstruction('You chose "Good", so you can choose only one additionalOption.');
+  //   } else if (option === 'Bad') {
+  //     setInstruction('You chose "Bad", so you can choose additionalOptions freely.');
+  //   }
+  // };
+
   return (
     <span className="radio-buttons-group">
       {options.map(option => (
@@ -15,11 +26,12 @@ function RadioButtonsGroup({ options, selectedOption, onChange }) {
           {option}
         </label>
       ))}
+      {/* <div className="instructions">{instruction}</div> */}
     </span>
   );
 }
 
-function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage,resetOptions }) {
+function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage, resetOptions }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [additionalOptions, setAdditionalOptions] = useState(null);
   const [selectedOption, setSelectedOption] = useState([]);
@@ -42,6 +54,11 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
   const handleTreeOptionChange = (option) => {
     setSelectedOption([option]);
     onTreeOptionChange(option, index);
+  };
+
+  const handleAdditionalOptionChange = (additionalOptions, index) => {
+    setAdditionalOptions(additionalOptions);
+    onAdditionalOptionChange(additionalOptions, index);
   };
 
   return (
@@ -78,7 +95,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             </div>
-            <Tree className = 'something' option={selectedOptions} folder="folder1" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
           </div>
             
             <div id = "flex-col">
@@ -99,7 +116,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             </div>
-            <Tree className = 'something' option={selectedOptions} folder="folder2" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
             </div>
             
             <div id = "flex-col">
@@ -120,7 +137,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             </div>
-            <Tree className = 'something' option={selectedOptions} folder="folder3" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
             </div>
           </>
         )}
@@ -128,11 +145,6 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
           <>
           <div id = "flex-col">
             <div>
-            <RadioButtonsGroup
-              options={["Dangerous"]}
-              selectedOption={additionalOptions}
-              onChange={setAdditionalOptions}
-            />
             <label>
             <span className="disabled-text">
               <input
@@ -143,17 +155,17 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Safe
             </span>
             </label>
+            <RadioButtonsGroup
+              options={["Dangerous"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
             </div>
-            <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
             </div>
 
             <div id = "flex-col">
             <div>
-            <RadioButtonsGroup
-              options={["Dull"]}
-              selectedOption={additionalOptions}
-              onChange={setAdditionalOptions}
-            />
             <label>
             <span className="disabled-text">
               <input
@@ -164,17 +176,17 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Enticing
             </span>
             </label>
+            <RadioButtonsGroup
+              options={["Dull"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
             </div>
-            <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
             </div>
 
             <div id = "flex-col">
             <div>
-            <RadioButtonsGroup
-              options={["Mechanistic"]}
-              selectedOption={additionalOptions}
-              onChange={setAdditionalOptions}
-            />
             <label>
             <span className="disabled-text">
               <input
@@ -185,8 +197,13 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
               Alive
             </span>
             </label>
+            <RadioButtonsGroup
+              options={["Mechanistic"]}
+              selectedOption={additionalOptions}
+              onChange={setAdditionalOptions}
+            />
             </div>
-            <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
             </div>
           </>
         )}
@@ -204,6 +221,9 @@ function App() {
   const [text, setText] = useState('');
   const [resetOptions, setResetOptions] = useState(false);
   const [savedPages, setSavedPages] = useState([]);
+  const [isDuplicated, setIsDuplicated] = useState(false);
+  const [duplicateOption, setDuplicateOption] = useState('Bad');
+  const [instruction, setInstruction] = useState('Choose one of Good, Bad');
 
   useEffect(() => {
     fetch('/dataset.json')
@@ -217,7 +237,13 @@ function App() {
   }, [currentPage]);
 
   useEffect(()=>{
+    setInstruction('Choose one of Good, Bad')
+    if(optionSets[0].option==='Good')
+      setDuplicateOption('Bad');
+    else
+      setDuplicateOption('Good');
     if(resetOptions){
+      setIsDuplicated(false);
       if(optionSets.length>1){
         setOptionSets(optionSets.splice(1,1));
       }
@@ -226,6 +252,11 @@ function App() {
   },[resetOptions])
 
   const handleOptionChange = (options, index) => {
+    console.log(options, index);
+    if(options[0]==='Bad')
+      setDuplicateOption('Good');
+    else
+      setDuplicateOption('Bad');
     setOptionSets(prevOptionSets => {
       const updatedOptionSets = [...prevOptionSets];
       updatedOptionSets[index] = { ...updatedOptionSets[index], options };
@@ -250,6 +281,7 @@ function App() {
   };
 
   const handleDuplicateOptions = () => {
+    setIsDuplicated(true);
     // Check if the current number of option sets is less than 3 before adding a new duplicate
     if (optionSets.length < 2) {
       setOptionSets(prevOptionSets => {
@@ -314,23 +346,41 @@ function App() {
   };
 
     const handleNext = async () => {
-    resetPageOptions();
     if (!savedPages.includes(currentPage)) {
       await handleSaveAnnotations(currentPage);
+      for (const optionSet of optionSets)
+      if(optionSet.options.length === 1 &&
+        optionSet.additionalOptions &&
+        optionSet.selectedOption.length === 1) {
+          if (currentPage < totalPages) {
+            resetPageOptions();
+            setCurrentPage(currentPage + 1);
+          }
+        }
     }
 
     // Navigate to the next page if not already on the last page
-    if (currentPage < totalPages) {
+    else if (currentPage < totalPages) {
+      resetPageOptions();
       setCurrentPage(currentPage + 1);
     }
   };
 
   const handlePrev = async () => {
-    resetPageOptions();
     if (!savedPages.includes(currentPage)) {
       await handleSaveAnnotations(currentPage);
+      for (const optionSet of optionSets)
+      if(optionSet.options.length === 1 &&
+        optionSet.additionalOptions &&
+        optionSet.selectedOption.length === 1) {
+          if (currentPage > 1) {
+            resetPageOptions();
+            setCurrentPage(currentPage - 1);
+          }
     }
-    if (currentPage > 1) {
+  }
+    else if (currentPage > 1) {
+      resetPageOptions();
       setCurrentPage(currentPage - 1);
     }
   };
@@ -347,6 +397,9 @@ function App() {
           value={text}
           readOnly
         />
+        <h5 className='instructions'>
+          {instruction}
+        </h5>
         <div className="main-content">
         {optionSets.map((_, index) => (
           <OptionSet
@@ -360,7 +413,8 @@ function App() {
           />
         ))}
         <footer className="footer">
-          <button className="footer-button" onClick={handleDuplicateOptions}>Duplicate Options</button>
+          <button className="footer-button" onClick={handleDuplicateOptions} disabled={isDuplicated} >
+            Add {duplicateOption} </button>
           <button className="footer-button" onClick={handleSaveAnnotations}>Save Annotations</button>
           <button onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
           <span className="page-info">Page {currentPage} of {totalPages}</span>
@@ -378,7 +432,23 @@ function App() {
   );
 }
 
-function Tree({ option, folder, selectedOptions, onSelect }) {
+function Tree({ option, folder, selectedOptions, additionalOption, onSelect }) {
+  const [resetOptions, setResetOptions] = useState(false);
+
+  useEffect(()=>{
+    // if(optionSets[0].option==='Good')
+    //   setDuplicateOption('Bad');
+    // else
+    //   setDuplicateOption('Good');
+    if(resetOptions){
+      // setIsDuplicated(false);
+      // if(optionSets.length>1){
+      //   setOptionSets(optionSets.splice(1,1));
+      // }
+      setResetOptions(false);
+    }
+  },[resetOptions])
+
   const treeData = {
     folder1: ["Pleasurable", "Regenerative", "Progressing", "Harmless", "Cooperative", "Stable", "Just"],
     folder2: ["Interesting", "Beautiful", "Abundant", "Worth Exploring", "Improvable", "Meaningful", "Funny"],
@@ -392,11 +462,20 @@ function Tree({ option, folder, selectedOptions, onSelect }) {
     onSelect(option);
   };
 
-  const isOptionDisabled = (folderName) => {
-    return (option === "Good" && (folderName === "folder4" || folderName === "folder5" || folderName === "folder6")) ||
-           (option === "Bad" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3"));
-  };
+  const resetPageOptions = () =>{
+    setResetOptions(true);
+ }
 
+  const isOptionDisabled = (folderName) => {
+    // resetPageOptions();
+    return (additionalOption === "Safe" && (folderName === "folder2" || folderName === "folder3" || folderName === "folder4" || folderName === "folder5" || folderName === "folder6")) ||
+           (additionalOption === "Enticing" && (folderName === "folder1" || folderName === "folder3" || folderName === "folder4" || folderName === "folder5" || folderName === "folder6")) ||
+           (additionalOption === "Alive" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder4" || folderName === "folder5" || folderName === "folder6")) ||
+           (additionalOption === "Dangerous" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder5" || folderName === "folder6")) ||
+           (additionalOption === "Dull" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder4" || folderName === "folder6")) ||
+           (additionalOption === "Mechanistic" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder4" || folderName === "folder5"));
+  };
+if(option[0] === "Good")
   return (
     <div className="tree-container">
       <div className="tree">
@@ -424,6 +503,88 @@ function Tree({ option, folder, selectedOptions, onSelect }) {
                   <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}</span>
                 </label>
               )}
+              {/* {(folder === "folder4" || folder === "folder5" || folder === "folder6") && (
+                <label>
+                  <input
+                    type="radio"
+                    value={treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}
+                    checked={false}
+                    disabled
+                  />
+                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}</span>
+                </label>
+              )} */}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+
+  if(option[1] === "Good")
+  return (
+    <div className="tree-container">
+      <div className="tree">
+        <ul>
+          {treeData[folder].map((option, index) => (
+            <li key={option}>
+              <label>
+                <input
+                  type="radio"
+                  value={option}
+                  checked={selectedOptions.includes(option)}
+                  onChange={() => handleOptionChange(option)}
+                  disabled={isOptionDisabled(folder)}
+                />
+                <span className={isOptionDisabled(folder) ? "disabled-text" : ""}>{option}</span>
+              </label>
+              {(folder === "folder1" || folder === "folder2" || folder === "folder3") && (
+                <label>
+                  <input
+                    type="radio"
+                    value={treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}
+                    checked={false}
+                    disabled
+                  />
+                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}</span>
+                </label>
+              )}
+              {/* {(folder === "folder4" || folder === "folder5" || folder === "folder6") && (
+                <label>
+                  <input
+                    type="radio"
+                    value={treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}
+                    checked={false}
+                    disabled
+                  />
+                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}</span>
+                </label>
+              )} */}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+
+  else
+  return (
+    <div className="tree-container">
+      <div className="tree">
+        <ul>
+          {treeData[folder].map((option, index) => (
+            <li key={option}>
+              {/* {(folder === "folder1" || folder === "folder2" || folder === "folder3") && (
+                <label>
+                  <input
+                    type="radio"
+                    value={treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}
+                    checked={false}
+                    disabled
+                  />
+                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}</span>
+                </label>
+              )} */}
               {(folder === "folder4" || folder === "folder5" || folder === "folder6") && (
                 <label>
                   <input
@@ -435,6 +596,16 @@ function Tree({ option, folder, selectedOptions, onSelect }) {
                   <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}</span>
                 </label>
               )}
+              <label>
+                <input
+                  type="radio"
+                  value={option}
+                  checked={selectedOptions.includes(option)}
+                  onChange={() => handleOptionChange(option)}
+                  disabled={isOptionDisabled(folder)}
+                />
+                <span className={isOptionDisabled(folder) ? "disabled-text" : ""}>{option}</span>
+              </label>
             </li>
           ))}
         </ul>
