@@ -52,8 +52,6 @@ app.post('/save', (req, res) => {
   }
 });
 
-
-
 // Route to retrieve JSON data
 app.get('/data', (req, res) => {
   try {
@@ -63,6 +61,24 @@ app.get('/data', (req, res) => {
   } catch (error) {
     console.error('Error retrieving data:', error);
     res.status(500).send('Error retrieving data');
+  }
+});
+
+// Route to retrieve data by ID (pageID)
+app.get('/getByID/:pageID', (req, res) => {
+  const pageID = parseInt(req.params.pageID);
+  try {
+    const jsonData = JSON.parse(fs.readFileSync('data.json'));
+    const dataByID = jsonData.find(entry => entry.page === pageID);
+    if (dataByID) {
+      res.json(dataByID);
+    } else {
+      res.status(404).send('Data not found for the specified ID');
+    }
+    console.log(res);
+  } catch (error) {
+    console.error('Error retrieving data by ID:', error);
+    res.status(500).send('Error retrieving data by ID');
   }
 });
 

@@ -4,12 +4,10 @@
     "options": [
       {
         "options": [
-          "Good"
+          "Bad"
         ],
-        "additionalOptions": "Enticing",
-        "selectedOption": [
-          "Interesting"
-        ]
+        "additionalOptions": "Dull",
+        "selectedOption": "Boring"
       }
     ]
   },
@@ -17,23 +15,23 @@
     "page": 1,
     "options": [
       {
+        "data": {
+          "page": 1,
+          "options": [
+            {
+              "options": [
+                "Bad"
+              ],
+              "additionalOptions": "Dull",
+              "selectedOption": "Unacceptable"
+            }
+          ]
+        },
         "options": [
-          "Good"
-        ],
-        "additionalOptions": "Safe",
-        "selectedOption": [
-          "Regenerative"
-        ]
-      },
-      {
-        "options": [
-          null,
           "Bad"
         ],
         "additionalOptions": "Dull",
-        "selectedOption": [
-          "Degenerative"
-        ]
+        "selectedOption": "Unacceptable"
       }
     ]
   },
@@ -42,12 +40,10 @@
     "options": [
       {
         "options": [
-          "Good"
+          "Bad"
         ],
-        "additionalOptions": "Safe",
-        "selectedOption": [
-          "Pleasurable"
-        ]
+        "additionalOptions": "Dull",
+        "selectedOption": "Miserable"
       }
     ]
   },
@@ -56,12 +52,10 @@
     "options": [
       {
         "options": [
-          "Bad"
+          "Good"
         ],
-        "additionalOptions": "Dull",
-        "selectedOption": [
-          "Boring"
-        ]
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
       }
     ]
   },
