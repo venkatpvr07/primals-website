@@ -33,37 +33,57 @@ function RadioButtonsGroup({ options, selectedOption, onChange }) {
 
 function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage, resetOptions, data }) {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [additionalOptions, setAdditionalOptions] = useState(null);
+  const [additionalOptions, setAdditionalOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
 
   useEffect(() => {
-    // console.log('data coming: ', data);
-    // if(resetOptions){
-
-    // }
-    // if(data!=null && data.page===currentPage && data.options && data.options[index] && data.options[index].options) {
-    //   setSelectedOptions([data.options[index].options[0]]);
-    //   console.log(selectedOptions);
-    //   setAdditionalOptions(data.options[index].additionalOptions);
-    //   console.log(additionalOptions);
-    //   setSelectedOption(data.options[index].selectedOption);
-    //   console.log(selectedOption);
-    // }
-    // else {
-      setSelectedOptions([]);
-      setAdditionalOptions(null);
+    
+    if(data === null) {
+      setAdditionalOptions([]);
       setSelectedOption([]);
-    // }
-    // if(data!=null && data.page===currentPage && data.options.length>1)
-    // {
-    //   setSelectedOptions([data.options[1].options[1]]);
-    //   console.log(selectedOptions);
-    //   setAdditionalOptions(data.options[1].additionalOptions);
-    //   console.log(additionalOptions);
-    //   setSelectedOption(data.options[1].selectedOption);
-    //   console.log(selectedOption);
-    // }
-  }, [currentPage, resetOptions]);
+    }
+  }, [selectedOptions[index]])
+
+  useEffect(() => {
+    console.log('data coming: ', data);
+    if(resetOptions){
+
+    }
+    if(data!=null && data.page===currentPage && data.options && data.options[index] && data.options[index].options) {
+      setSelectedOptions([data.options[index].options[0]]);
+      console.log(selectedOptions);
+      setAdditionalOptions([data.options[index].additionalOptions]);
+      console.log(additionalOptions);
+      setSelectedOption([data.options[index].selectedOption[0]]);
+      console.log(selectedOption);
+    }
+    else {
+      setSelectedOptions([]);
+      setAdditionalOptions([]);
+      setSelectedOption([]);
+     }
+    if(data!=null && data.page===currentPage && data.options.length>1)
+    {
+      setSelectedOptions(prevSelectedOptions => {
+        const currentSelectedOptions = [...prevSelectedOptions]
+        currentSelectedOptions.push(data.options[1].options[1])
+        return currentSelectedOptions
+      });
+      console.log(selectedOptions);
+      setAdditionalOptions(prevAdditionalOptions => {
+        const currentAdditionalOptions = [...prevAdditionalOptions]
+        currentAdditionalOptions.push(data.options[1].additionalOptions);
+        return currentAdditionalOptions;
+      });
+      console.log(additionalOptions);
+      setSelectedOption(prevSelectedOptions => {
+        const currentSelectedOptions = [...prevSelectedOptions];
+        currentSelectedOptions.push(data.options[1].selectedOption[0])
+        return currentSelectedOptions;
+      });
+      console.log(selectedOption);
+    }
+  }, [currentPage, resetOptions, data]);
 
   useEffect(() => {
     onOptionChange(selectedOptions, index);
@@ -71,9 +91,7 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
     onTreeOptionChange(selectedOption, index);
   }, [selectedOptions, additionalOptions, index, onOptionChange, onAdditionalOptionChange]);
 
-  useEffect(() => {
-    setAdditionalOptions(null);
-  }, [selectedOptions[index]])
+  
   
   const handleTreeOptionChange = (option) => {
     setSelectedOption([option]);
@@ -308,13 +326,14 @@ function App() {
     fetch(`http://localhost:4000/getByID/${currentPage}`)
       .then(response => {
         if (!response.ok) {
+          setData(null)
           throw new Error('Network response was not ok');
         }
         // console.log('data is: ', response);
         return response.json();
       })
       .then(data => {
-        console.log('data is: ', data);
+        console.log('data in App is: ', data);
         // setOptionSets(data.options.map(option => ({ options: option.options[0], additionalOptions: option.additionalOptions, selectedOption: option.selectedOption })));
         // setOptionSets([data.options[0].options[0], data.options[0].additionalOptions, data.options[0].selectedOption]);
         // setOptionSets(prevOptionSets => {
@@ -323,20 +342,20 @@ function App() {
         //   return updatedOptionSets;
         // });
         setData(data);
-        if(data!=null && data.page===currentPage && data.options) {
-          // setSelectedOptions([data.options[index].options[0]]);
-          // console.log(selectedOptions);
-          // setAdditionalOptions(data.options[index].additionalOptions);
-          // console.log(additionalOptions);
-          // setSelectedOption(data.options[index].selectedOption);
-          // console.log(selectedOption);
-          // setOptionSets(data.options);
-          setOptionSets(prevOptionSets => {
-          const updatedOptionSets = [...prevOptionSets];
-          updatedOptionSets[0] = { ...updatedOptionSets[0],  options: data.options };
-          return updatedOptionSets;
-        });
-        }
+        // if(data!=null && data.page===currentPage && data.options) {
+        //   // setSelectedOptions([data.options[index].options[0]]);
+        //   // console.log(selectedOptions);
+        //   // setAdditionalOptions(data.options[index].additionalOptions);
+        //   // console.log(additionalOptions);
+        //   // setSelectedOption(data.options[index].selectedOption);
+        //   // console.log(selectedOption);
+        //   // setOptionSets(data.options);
+        //   setOptionSets(prevOptionSets => {
+        //   const updatedOptionSets = [...prevOptionSets];
+        //   updatedOptionSets[0] = { ...updatedOptionSets[0],  options: data.options };
+        //   return updatedOptionSets;
+        // });
+        // }
 
       })
       .catch(error => {
@@ -519,6 +538,7 @@ function App() {
           {instruction}
         </h5>
         <div className="main-content">
+        {console.log(optionSets)}
         {optionSets.map((_, index) => (
           <OptionSet
             key={index}
