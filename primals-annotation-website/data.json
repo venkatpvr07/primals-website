@@ -1,125 +1,106 @@
 [
   {
     "page": 1,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Good"
-        ],
+        "options": "Good",
         "additionalOptions": "Safe",
-        "selectedOption": "Regenerative"
-      }
-    ]
-  },
-  {
-    "page": 9,
-    "options": [
-      {
-        "options": [
-          "Bad"
-        ],
-        "additionalOptions": "Dull",
-        "selectedOption": "Declining"
+        "selectedOption": "Pleasurable"
       }
     ]
   },
   {
     "page": 2,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Good"
-        ],
-        "additionalOptions": "Enticing",
-        "selectedOption": "Interesting"
+        "options": "Bad",
+        "additionalOptions": "Dull",
+        "selectedOption": "Boring"
       }
     ]
   },
   {
     "page": 3,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Bad"
-        ],
-        "additionalOptions": "Dangerous",
-        "selectedOption": "Unacceptable"
-      }
-    ]
-  },
-  {
-    "page": 4,
-    "options": [
-      {
-        "options": [
-          "Good"
-        ],
+        "options": "Good",
         "additionalOptions": "Enticing",
-        "selectedOption": "Changing"
+        "selectedOption": "Beautiful"
       }
     ]
   },
   {
     "page": 5,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Good"
-        ],
-        "additionalOptions": "Enticing",
-        "selectedOption": "Funny"
+        "options": "Bad",
+        "additionalOptions": "Mechanistic",
+        "selectedOption": "Unacceptable"
       }
     ]
   },
   {
     "page": 6,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Bad"
-        ],
-        "additionalOptions": "Dull",
-        "selectedOption": "Unacceptable"
+        "options": "Good",
+        "additionalOptions": "Alive",
+        "selectedOption": "Intentional"
       }
     ]
   },
   {
     "page": 7,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Good"
-        ],
-        "additionalOptions": "Enticing",
-        "selectedOption": "Interesting"
-      },
-      {
-        "options": [
-          null,
-          "Bad"
-        ],
-        "additionalOptions": "Dull",
-        "selectedOption": "Unacceptable"
+        "options": "Good",
+        "additionalOptions": "Alive",
+        "selectedOption": "Understandable"
       }
     ]
   },
   {
     "page": 8,
-    "options": [
+    "optionSets": [
       {
-        "options": [
-          "Good"
-        ],
-        "additionalOptions": "Safe",
-        "selectedOption": "Just"
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 10,
+    "optionSets": [
+      {
+        "options": "Bad",
+        "additionalOptions": "Mechanistic",
+        "selectedOption": "Unacceptable"
+      }
+    ]
+  },
+  {
+    "page": 12,
+    "optionSets": [
+      {
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 17,
+    "optionSets": [
+      {
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
       },
       {
-        "options": [
-          null,
-          "Bad"
-        ],
-        "additionalOptions": "Mechanistic",
-        "selectedOption": "Separable"
+        "options": "Bad",
+        "additionalOptions": "Dull",
+        "selectedOption": "Boring"
       }
     ]
   }

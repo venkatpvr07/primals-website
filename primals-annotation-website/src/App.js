@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
+import Tree from './Tree';
 
-function RadioButtonsGroup({ options, selectedOption, onChange }) {
+function RadioButtonsGroup({ index, options, selectedOption, onChange, topLevel }) {
 
   // const handleOptionChange = (option) => {
   //   onChange(option);
@@ -20,8 +21,9 @@ function RadioButtonsGroup({ options, selectedOption, onChange }) {
           <input
             type="radio"
             value={option}
-            checked={selectedOption === option}
+            checked={selectedOption && selectedOption[0] === option}
             onChange={() => onChange(option)}
+            disabled={topLevel && index === 1 && selectedOption[0] !== option}
           />
           {option}
         </label>
@@ -31,105 +33,120 @@ function RadioButtonsGroup({ options, selectedOption, onChange }) {
   );
 }
 
-function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage, resetOptions, data }) {
-  const [selectedOptions, setSelectedOptions] = useState([]);
+function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOptionChange, currentPage, resetOptions, data, optionSets }) {
+  let initialSelectedOptions = []
+  if(index === 1) {
+    initialSelectedOptions = [optionSets[0].options === 'Good' ? 'Bad': 'Good']
+  }
+  const [selectedOptions, setSelectedOptions] = useState(initialSelectedOptions);
   const [additionalOptions, setAdditionalOptions] = useState([]);
   const [selectedOption, setSelectedOption] = useState([]);
 
-  useEffect(() => {
+  
+  // useEffect(() => {
     
-    if(data === null) {
-      setAdditionalOptions([]);
-      setSelectedOption([]);
-    }
-  }, [selectedOptions[index]])
+  //   if(data === null) {
+  //     setAdditionalOptions([]);
+  //     setSelectedOption([]);
+  //   }
+  // }, [selectedOptions[0]])
 
   useEffect(() => {
     console.log('data coming: ', data);
-    if(resetOptions){
-
-    }
-    if(data!=null && data.page===currentPage && data.options && data.options[index] && data.options[index].options) {
-      setSelectedOptions([data.options[index].options[0]]);
+    if(data !== null && data !== undefined && data.page===currentPage && data.optionSets && data.optionSets[index] && data.optionSets[index].options) {
+      setSelectedOptions([data.optionSets[index].options]);
       console.log(selectedOptions);
-      setAdditionalOptions([data.options[index].additionalOptions]);
+      setAdditionalOptions([data.optionSets[index].additionalOptions]);
       console.log(additionalOptions);
-      setSelectedOption([data.options[index].selectedOption[0]]);
+      setSelectedOption([data.optionSets[index].selectedOption]);
       console.log(selectedOption);
     }
     else {
-      setSelectedOptions([]);
-      setAdditionalOptions([]);
+      setSelectedOptions(initialSelectedOptions);
+      setAdditionalOptions([])
       setSelectedOption([]);
-     }
-    if(data!=null && data.page===currentPage && data.options.length>1)
-    {
-      setSelectedOptions(prevSelectedOptions => {
-        const currentSelectedOptions = [...prevSelectedOptions]
-        currentSelectedOptions.push(data.options[1].options[1])
-        return currentSelectedOptions
-      });
-      console.log(selectedOptions);
-      setAdditionalOptions(prevAdditionalOptions => {
-        const currentAdditionalOptions = [...prevAdditionalOptions]
-        currentAdditionalOptions.push(data.options[1].additionalOptions);
-        return currentAdditionalOptions;
-      });
-      console.log(additionalOptions);
-      setSelectedOption(prevSelectedOptions => {
-        const currentSelectedOptions = [...prevSelectedOptions];
-        currentSelectedOptions.push(data.options[1].selectedOption[0])
-        return currentSelectedOptions;
-      });
-      console.log(selectedOption);
     }
+
+    // else if(data!==null && data !== undefined && data.page===currentPage && data.options.length>1)
+    // {
+    //   setSelectedOptions(prevSelectedOptions => {
+    //     const currentSelectedOptions = [...prevSelectedOptions]
+    //     currentSelectedOptions.push(data.options[1].options)
+    //     return currentSelectedOptions
+    //   });
+    //   console.log(selectedOptions);
+    //   setAdditionalOptions(prevAdditionalOptions => {
+    //     const currentAdditionalOptions = [...prevAdditionalOptions]
+    //     currentAdditionalOptions.push(data.options[1].additionalOptions);
+    //     return currentAdditionalOptions;
+    //   });
+    //   console.log(additionalOptions);
+    //   setSelectedOption(prevSelectedOptions => {
+    //     const currentSelectedOptions = [...prevSelectedOptions];
+    //     currentSelectedOptions.push(data.options[1].selectedOption)
+    //     return currentSelectedOptions;
+    //   });
+    //   console.log(selectedOption);
+    // }
   }, [currentPage, resetOptions, data]);
 
   useEffect(() => {
     onOptionChange(selectedOptions, index);
     onAdditionalOptionChange(additionalOptions, index);
     onTreeOptionChange(selectedOption, index);
-  }, [selectedOptions, additionalOptions, index, onOptionChange, onAdditionalOptionChange]);
+  }, [selectedOptions, additionalOptions, selectedOption ]);
 
+  
   
   
   const handleTreeOptionChange = (option) => {
+    if(additionalOptions.length === 0){
+      alert('please select secondary option')
+      return;
+    }
+      
     setSelectedOption([option]);
-    onTreeOptionChange(option, index);
   };
 
-  const handleAdditionalOptionChange = (additionalOptions, index) => {
-    setAdditionalOptions(additionalOptions);
-    onAdditionalOptionChange(additionalOptions, index);
-  };
+  // const handleAdditionalOptionChange = (additionalOptions, index) => {
+  //   setAdditionalOptions(additionalOptions);
+  //   onAdditionalOptionChange(additionalOptions, index);
+  // };
 
   const handle6OptionChange = (options) => {
-    setAdditionalOptions(options)
-    setSelectedOption([])
+    console.log('Its here')
+      setAdditionalOptions([options])
+      setSelectedOption([])
+  }
+
+  const handleSelectedOptionsChange = (option) => {
+      setSelectedOptions([option])
+      setAdditionalOptions([])
+      setSelectedOption([])
   }
 
   return (
     <>
     <div className="toplevel">
       <RadioButtonsGroup
+        index = {index}
         options={["Good", "Bad"]}
-        selectedOption={selectedOptions[index]}
-        onChange={(option) => setSelectedOptions(prevOptions => {
-          const updatedOptions = [...prevOptions];
-          updatedOptions[index] = option;
-          return updatedOptions;
-        })}
+        selectedOption={selectedOptions}
+        onChange={handleSelectedOptionsChange}
+        topLevel = {true}
       />
       </div>
       <div className="additional-options-container">
-        {selectedOptions[index] === "Good" && (
+        {selectedOptions[0] === "Good" && (
           <>
           <div id = "flex-col">
             <div>
             <RadioButtonsGroup
+              index = {index}
               options={["Safe"]}
               selectedOption={additionalOptions}
               onChange={handle6OptionChange}
+              topLevel={false}
             />
             <label>
             <span className="disabled-text">
@@ -142,15 +159,17 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             </div>
-            <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder1" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
           </div>
             
             <div id = "flex-col">
               <div>
             <RadioButtonsGroup
+              index = {index}
               options={["Enticing"]}
               selectedOption={additionalOptions}
               onChange={handle6OptionChange}
+              topLevel={false}
             />
             <label>
             <span className="disabled-text">
@@ -163,15 +182,17 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             </div>
-            <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder2" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
             </div>
             
             <div id = "flex-col">
             <div>
             <RadioButtonsGroup
+              index = {index}
               options={["Alive"]}
               selectedOption={additionalOptions}
               onChange={handle6OptionChange}
+              topLevel={false}
             />
             <label>
             <span className="disabled-text">
@@ -184,12 +205,12 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             </div>
-            <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
-            <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder3" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder4" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
             </div>
           </>
         )}
-        {selectedOptions[index] === "Bad" && (
+        {selectedOptions[0] === "Bad" && (
           <>
           <div id = "flex-col">
             <div>
@@ -204,12 +225,14 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             <RadioButtonsGroup
+              index = {index}
               options={["Dangerous"]}
               selectedOption={additionalOptions}
               onChange={handle6OptionChange}
+              topLevel={false}
             />
             </div>
-            <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder5" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
             </div>
 
             <div id = "flex-col">
@@ -225,12 +248,14 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             <RadioButtonsGroup
+              index = {index}
               options={["Dull"]}
               selectedOption={additionalOptions}
               onChange={handle6OptionChange}
+              topLevel={false}
             />
             </div>
-            <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder6" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
             </div>
 
             <div id = "flex-col">
@@ -246,13 +271,15 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
             </span>
             </label>
             <RadioButtonsGroup
+              index = {index}
               options={["Mechanistic"]}
               selectedOption={additionalOptions}
               onChange={handle6OptionChange}
+              topLevel={false}
             />
             </div>
-            <Tree option={selectedOptions} folder="folder7" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
-            <Tree option={selectedOptions} folder="folder8" selectedOptions={selectedOption} additionalOption={additionalOptions} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder7" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
+            <Tree option={selectedOptions} folder="folder8" selectedOptions={selectedOption} additionalOption={additionalOptions[0]} onSelect={handleTreeOptionChange} />
             </div>
           </>
         )}
@@ -342,6 +369,16 @@ function App() {
         //   return updatedOptionSets;
         // });
         setData(data);
+        if(data!=null && data.page===currentPage && data.optionSets) {
+          setOptionSets([{...data.optionSets[0]}])  
+          if(data.optionSets.length === 2) {
+              setOptionSets(prevOptionSets => {
+                const currOptionSets = [{...prevOptionSets[0]}]
+                currOptionSets.push({...data.optionSets[1]})
+                return currOptionSets;
+              })
+            }
+        }
         // if(data!=null && data.page===currentPage && data.options) {
         //   // setSelectedOptions([data.options[index].options[0]]);
         //   // console.log(selectedOptions);
@@ -389,36 +426,60 @@ function App() {
       setDuplicateOption('Good');
     else
       setDuplicateOption('Bad');
-    setOptionSets(prevOptionSets => {
-      const updatedOptionSets = [...prevOptionSets];
-      updatedOptionSets[index] = { ...updatedOptionSets[index], options };
-      return updatedOptionSets;
-    });
+      const currentOption = options[0];
+      const currentOptionSetObject = {options: currentOption}
+    if(index === 0) {
+      setOptionSets([currentOptionSetObject]);
+      setIsDuplicated(false)
+    }
+    else {
+      setOptionSets(prevOptionSets => {
+        const currentOptionSets = [{...prevOptionSets[0]}, currentOptionSetObject]
+        return currentOptionSets;
+      }) 
+    }
   }, []);
 
   const handleAdditionalOptionChange = useCallback(function handleAdditionalOptionChange(additionalOptions, index) {
-    setOptionSets(prevOptionSets => {
-      const updatedOptionSets = [...prevOptionSets];
-      updatedOptionSets[index] = { ...updatedOptionSets[index], additionalOptions };
-      return updatedOptionSets;
-    });
+    
+      
+      setOptionSets(prevOptionSets => {
+        let currentOptionSets = [{...prevOptionSets[0]}];
+        if(index === 1)
+          currentOptionSets = [{...prevOptionSets[0]}, {...prevOptionSets[1]}]
+        currentOptionSets[index].additionalOptions = additionalOptions[0];
+        return currentOptionSets;
+      });
   }, []);
 
   const handleTreeOptionChange = (selectedOption, index) => {
     setOptionSets(prevOptionSets => {
-      const updatedOptionSets = [...prevOptionSets];
-      updatedOptionSets[index] = { ...updatedOptionSets[index], selectedOption };
-      return updatedOptionSets;
+      let currentOptionSets = [{...prevOptionSets[0]}];
+      if(index === 1)
+        currentOptionSets = [{...prevOptionSets[0]}, {...prevOptionSets[1]}]
+      currentOptionSets[index].selectedOption = selectedOption[0];
+      return currentOptionSets;
     });
   };
 
   const handleDuplicateOptions = () => {
+    if(
+      !optionSets[0].options ||
+      !optionSets[0].additionalOptions ||
+      !optionSets[0].selectedOption
+    ) {
+      alert('Please select one primary, one secondary, and one tertiary primals before saving annotations.');
+      console.log("Please select one primary, one secondary, and one tertiary primals before saving annotations.");
+      return;
+    }
     setIsDuplicated(true);
+    console.log("option sets after duplication:", optionSets)
     // Check if the current number of option sets is less than 3 before adding a new duplicate
     if (optionSets.length < 2) {
       setOptionSets(prevOptionSets => {
         const lastOptionSet = prevOptionSets[prevOptionSets.length - 1];
-        const newOptionSets = [...prevOptionSets, { ...lastOptionSet }];
+        const newOptionSets = [...prevOptionSets, {}];
+        console.log("new option sets:", newOptionSets)
         return newOptionSets;
       });
     } else {
@@ -426,16 +487,19 @@ function App() {
       console.log("Maximum number of duplicate copies reached.");
     }
   };
-  
+  const handlePageChange = (index) => {
+    setCurrentPage(index + 1)
+    setOptionSets([0])
+  }
 
   const handleSaveAnnotations = async () => {  
     // Check if one option, one additionalOption, and one treeOption are selected for each option set
     for (const optionSet of optionSets) {
       console.log(optionSets);
       if (
-        optionSet.options.length < 1 ||
+        !optionSet.options ||
         !optionSet.additionalOptions ||
-        optionSet.selectedOption.length<1
+        !optionSet.selectedOption
       ) {
         alert('Please select one primary, one secondary, and one tertiary primals before saving annotations.');
         console.log("Please select one primary, one secondary, and one tertiary primals before saving annotations.");
@@ -450,9 +514,9 @@ function App() {
     
     const dataToSave = {
       page: currentPage,
-      options: currentPageOptions,
+      optionSets: currentPageOptions,
     };
-    
+    console.log("data to save:", dataToSave)
     try {
       // Send the data to the server
       const response = await fetch('http://localhost:4000/save', {
@@ -482,7 +546,7 @@ function App() {
     if (!savedPages.includes(currentPage)) {
       await handleSaveAnnotations(currentPage);
       for (const optionSet of optionSets)
-      if(optionSet.options.length === 1 &&
+      if(optionSet.options &&
         optionSet.additionalOptions &&
         optionSet.selectedOption) {
           if (currentPage < totalPages) {
@@ -507,7 +571,7 @@ function App() {
     if (!savedPages.includes(currentPage)) {
       await handleSaveAnnotations(currentPage);
       for (const optionSet of optionSets)
-      if(optionSet.options.length === 1 &&
+      if(optionSet.options &&
         optionSet.additionalOptions &&
         optionSet.selectedOption) {
           if (currentPage > 1) {
@@ -549,6 +613,7 @@ function App() {
             currentPage={currentPage}
             resetOptions = {resetOptions} // Pass currentPage to OptionSet
             data = {data}
+            optionSets = {optionSets}
           />
         ))}
         <footer className="footer">
@@ -560,193 +625,15 @@ function App() {
           <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
         </footer>
       </div>
-      <div className="navbar">
-        <ul>
+      <div className="navbar" style={{ textAlign: 'left', backgroundColor: '#f0f0f0', padding: '10px' }}>
+        <h3>Pages</h3>
+        <ul style={{ listStyleType: 'none', padding: 0 }}>
           {pageData.map((page, index) => (
-            <li key={index}><a href='#' style={{ color: savedPages.includes(index + 1) ? 'red' : 'navy' }} onClick={() => setCurrentPage(index + 1)}>Page {index + 1}</a></li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-function Tree({ option, folder, selectedOptions, additionalOption, onSelect }) {
-  const [resetOptions, setResetOptions] = useState(false);
-
-  useEffect(()=>{
-    // if(optionSets[0].option==='Good')
-    //   setDuplicateOption('Bad');
-    // else
-    //   setDuplicateOption('Good');
-    if(resetOptions){
-      // setIsDuplicated(false);
-      // if(optionSets.length>1){
-      //   setOptionSets(optionSets.splice(1,1));
-      // }
-      setResetOptions(false);
-    }
-  },[resetOptions])
-
-  const treeData = {
-    folder1: ["Pleasurable", "Regenerative", "Progressing", "Harmless", "Cooperative", "Stable", "Just"],
-    folder2: ["Interesting", "Beautiful", "Abundant", "Worth Exploring", "Improvable", "Meaningful", "Funny"],
-    folder3: ["Intentional", "Needs Me", "About Me"],
-    folder4: ["Acceptable", "Changing", "Hierarchical", "Interconnected", "Understandable"],
-    folder5: ["Miserable", "Degenerative", "Declining", "Threatening", "Competitive", "Fragile", "Unjust"],
-    folder6: ["Boring", "Ugly", "Barren", "Not Worth Exploring", "Too Hard to Improve", "Meaningless", "Not Funny"],
-    folder7: ["Unintentional", "Doesn't Need Me", "Indifferent"],
-    folder8: ["Unacceptable", "Static", "Non Hierarchical", "Separable", "Too Hard To Understand"],
-  };
-
-  const handleOptionChange = (option) => {
-    onSelect(option);
-  };
-
-  const resetPageOptions = () =>{
-    setResetOptions(true);
- }
-
-  const isOptionDisabled = (folderName) => {
-    // resetPageOptions();
-    return (additionalOption === "Safe" && (folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5" || folderName === "folder6")) ||
-           (additionalOption === "Enticing" && (folderName === "folder1" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5" || folderName === "folder6")) ||
-           (additionalOption === "Alive" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder7" || folderName === "folder5" || folderName === "folder6")) ||
-           (additionalOption === "Dangerous" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder6")) ||
-           (additionalOption === "Dull" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5")) ||
-           (additionalOption === "Mechanistic" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder6" || folderName === "folder5"));
-  };
-if(option[0] === "Good" || option[1] === "Good")
-  return (
-    <div className="tree-container">
-      <div className="tree">
-        <ul>
-          {treeData[folder].map((option, index) => (
-            <li key={option}>
-              <label>
-                <input
-                  type="radio"
-                  value={option}
-                  checked={selectedOptions.includes(option)}
-                  onChange={() => handleOptionChange(option)}
-                  disabled={isOptionDisabled(folder)}
-                />
-                <span className={isOptionDisabled(folder) ? "disabled-text" : ""}>{option}</span>
-              </label>
-              {(folder === "folder1" || folder === "folder2" || folder === "folder3" || folder === "folder4" ) && (
-                <label>
-                  <input
-                    type="radio"
-                    value={treeData[`folder${parseInt(folder.slice(-1)) + 4}`][index]}
-                    checked={false}
-                    disabled
-                  />
-                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 4}`][index]}</span>
-                </label>
-              )}
-              {/* {(folder === "folder4" || folder === "folder5" || folder === "folder6") && (
-                <label>
-                  <input
-                    type="radio"
-                    value={treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}
-                    checked={false}
-                    disabled
-                  />
-                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}</span>
-                </label>
-              )} */}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
-
-  // if(option[1] === "Good")
-  // return (
-  //   <div className="tree-container">
-  //     <div className="tree">
-  //       <ul>
-  //         {treeData[folder].map((option, index) => (
-  //           <li key={option}>
-  //             <label>
-  //               <input
-  //                 type="radio"
-  //                 value={option}
-  //                 checked={selectedOptions.includes(option)}
-  //                 onChange={() => handleOptionChange(option)}
-  //                 disabled={isOptionDisabled(folder)}
-  //               />
-  //               <span className={isOptionDisabled(folder) ? "disabled-text" : ""}>{option}</span>
-  //             </label>
-  //             {(folder === "folder1" || folder === "folder2" || folder === "folder3" || folder === "folder4" ) && (
-  //               <label>
-  //                 <input
-  //                   type="radio"
-  //                   value={treeData[`folder${parseInt(folder.slice(-1)) + 4}`][index]}
-  //                   checked={false}
-  //                   disabled
-  //                 />
-  //                 <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 4}`][index]}</span>
-  //               </label>
-  //             )}
-  //             {/* {(folder === "folder4" || folder === "folder5" || folder === "folder6") && (
-  //               <label>
-  //                 <input
-  //                   type="radio"
-  //                   value={treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}
-  //                   checked={false}
-  //                   disabled
-  //                 />
-  //                 <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 3}`][index]}</span>
-  //               </label>
-  //             )} */}
-  //           </li>
-  //         ))}
-  //       </ul>
-  //     </div>
-  //   </div>
-  // );
-
-  else
-  return (
-    <div className="tree-container">
-      <div className="tree">
-        <ul>
-          {treeData[folder].map((option, index) => (
-            <li key={option}>
-              {/* {(folder === "folder1" || folder === "folder2" || folder === "folder3") && (
-                <label>
-                  <input
-                    type="radio"
-                    value={treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}
-                    checked={false}
-                    disabled
-                  />
-                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) + 3}`][index]}</span>
-                </label>
-              )} */}
-              {(folder === "folder5" || folder === "folder6" || folder === "folder7" || folder === "folder8" ) && (
-                <label>
-                  <input
-                    type="radio"
-                    value={treeData[`folder${parseInt(folder.slice(-1)) - 4}`][index]}
-                    checked={false}
-                    disabled
-                  />
-                  <span className="disabled-text">{treeData[`folder${parseInt(folder.slice(-1)) - 4}`][index]}</span>
-                </label>
-              )}
-              <label>
-                <input
-                  type="radio"
-                  value={option}
-                  checked={selectedOptions.includes(option)}
-                  onChange={() => handleOptionChange(option)}
-                  disabled={isOptionDisabled(folder)}
-                />
-                <span className={isOptionDisabled(folder) ? "disabled-text" : ""}>{option}</span>
-              </label>
+            <li key={index} style={{ margin: '10px 0', padding: '4px', cursor: 'pointer', backgroundColor: currentPage === index + 1 ? '#bcbcbc' : '#eee', color: currentPage === index + 1 ? '#fff' : '#000' }}>
+              <a href='#' onClick={() => setCurrentPage(index + 1)} style={{ textDecoration: 'none' }}>
+                {`Page ${index + 1}`}
+                {savedPages.includes(index + 1) && <span style={{ color: 'green', marginLeft: '5px' }}>&#10003;</span>}
+              </a>
             </li>
           ))}
         </ul>
@@ -754,5 +641,7 @@ if(option[0] === "Good" || option[1] === "Good")
     </div>
   );
 }
+
+
 
 export default App;

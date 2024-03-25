@@ -74,14 +74,14 @@
   padding: 10px; /* Add padding to separate content from navbar */
 }
 
-.navbar ul {
-  list-style-type: none; /* Remove bullet points from the list */
-  padding: 0; /* Remove default padding */
+/* .navbar ul {
+  list-style-type: none; 
+  padding: 0;
 }
 
 .navbar li {
-  margin-bottom: 10px; /* Add space between navbar items */
-}
+  margin-bottom: 10px; 
+} */
 
 /* .navbar a {
   text-decoration: none; /* Remove underline from links */
