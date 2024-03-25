@@ -22,5 +22,105 @@
         "selectedOption": "Declining"
       }
     ]
+  },
+  {
+    "page": 2,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 3,
+    "options": [
+      {
+        "options": [
+          "Bad"
+        ],
+        "additionalOptions": "Dangerous",
+        "selectedOption": "Unacceptable"
+      }
+    ]
+  },
+  {
+    "page": 4,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Changing"
+      }
+    ]
+  },
+  {
+    "page": 5,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Funny"
+      }
+    ]
+  },
+  {
+    "page": 6,
+    "options": [
+      {
+        "options": [
+          "Bad"
+        ],
+        "additionalOptions": "Dull",
+        "selectedOption": "Unacceptable"
+      }
+    ]
+  },
+  {
+    "page": 7,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      },
+      {
+        "options": [
+          null,
+          "Bad"
+        ],
+        "additionalOptions": "Dull",
+        "selectedOption": "Unacceptable"
+      }
+    ]
+  },
+  {
+    "page": 8,
+    "options": [
+      {
+        "options": [
+          "Good"
+        ],
+        "additionalOptions": "Safe",
+        "selectedOption": "Just"
+      },
+      {
+        "options": [
+          null,
+          "Bad"
+        ],
+        "additionalOptions": "Mechanistic",
+        "selectedOption": "Separable"
+      }
+    ]
   }
 ]

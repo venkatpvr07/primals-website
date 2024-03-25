@@ -612,9 +612,9 @@ function Tree({ option, folder, selectedOptions, additionalOption, onSelect }) {
     return (additionalOption === "Safe" && (folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5" || folderName === "folder6")) ||
            (additionalOption === "Enticing" && (folderName === "folder1" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5" || folderName === "folder6")) ||
            (additionalOption === "Alive" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder7" || folderName === "folder5" || folderName === "folder6")) ||
-           (additionalOption === "Dangerous" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder5" || folderName === "folder6")) ||
-           (additionalOption === "Dull" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder6")) ||
-           (additionalOption === "Mechanistic" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5"));
+           (additionalOption === "Dangerous" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder6")) ||
+           (additionalOption === "Dull" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder7" || folderName === "folder5")) ||
+           (additionalOption === "Mechanistic" && (folderName === "folder1" || folderName === "folder2" || folderName === "folder3" || folderName === "folder6" || folderName === "folder5"));
   };
 if(option[0] === "Good" || option[1] === "Good")
   return (
