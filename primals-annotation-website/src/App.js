@@ -37,33 +37,33 @@ function OptionSet({ index, onOptionChange, onAdditionalOptionChange, onTreeOpti
   const [selectedOption, setSelectedOption] = useState([]);
 
   useEffect(() => {
-    // console.log('data coming: ', data);
-    // if(resetOptions){
+    console.log('data coming: ', data);
+    if(resetOptions){
 
-    // }
-    // if(data!=null && data.page===currentPage && data.options && data.options[index] && data.options[index].options) {
-    //   setSelectedOptions([data.options[index].options[0]]);
-    //   console.log(selectedOptions);
-    //   setAdditionalOptions(data.options[index].additionalOptions);
-    //   console.log(additionalOptions);
-    //   setSelectedOption(data.options[index].selectedOption);
-    //   console.log(selectedOption);
-    // }
+    }
+    if(data!=null && data.page===currentPage && data.options && data.options[index] && data.options[index].options) {
+      setSelectedOptions([data.options[index].options[0]]);
+      console.log(selectedOptions);
+      setAdditionalOptions(data.options[index].additionalOptions);
+      console.log(additionalOptions);
+      setSelectedOption(data.options[index].selectedOption);
+      console.log(selectedOption);
+    }
     // else {
-      setSelectedOptions([]);
-      setAdditionalOptions(null);
-      setSelectedOption([]);
+    //   setSelectedOptions([]);
+    //   setAdditionalOptions(null);
+    //   setSelectedOption([]);
     // }
-    // if(data!=null && data.page===currentPage && data.options.length>1)
-    // {
-    //   setSelectedOptions([data.options[1].options[1]]);
-    //   console.log(selectedOptions);
-    //   setAdditionalOptions(data.options[1].additionalOptions);
-    //   console.log(additionalOptions);
-    //   setSelectedOption(data.options[1].selectedOption);
-    //   console.log(selectedOption);
-    // }
-  }, [currentPage, resetOptions]);
+    if(data!=null && data.page===currentPage && data.options.length>1)
+    {
+      setSelectedOptions([data.options[1].options[1]]);
+      console.log(selectedOptions);
+      setAdditionalOptions(data.options[1].additionalOptions);
+      console.log(additionalOptions);
+      setSelectedOption(data.options[1].selectedOption);
+      console.log(selectedOption);
+    }
+  }, [currentPage, resetOptions, data]);
 
   useEffect(() => {
     onOptionChange(selectedOptions, index);
@@ -323,20 +323,20 @@ function App() {
         //   return updatedOptionSets;
         // });
         setData(data);
-        if(data!=null && data.page===currentPage && data.options) {
-          // setSelectedOptions([data.options[index].options[0]]);
-          // console.log(selectedOptions);
-          // setAdditionalOptions(data.options[index].additionalOptions);
-          // console.log(additionalOptions);
-          // setSelectedOption(data.options[index].selectedOption);
-          // console.log(selectedOption);
-          // setOptionSets(data.options);
-          setOptionSets(prevOptionSets => {
-          const updatedOptionSets = [...prevOptionSets];
-          updatedOptionSets[0] = { ...updatedOptionSets[0],  options: data.options };
-          return updatedOptionSets;
-        });
-        }
+        // if(data!=null && data.page===currentPage && data.options) {
+        //   // setSelectedOptions([data.options[index].options[0]]);
+        //   // console.log(selectedOptions);
+        //   // setAdditionalOptions(data.options[index].additionalOptions);
+        //   // console.log(additionalOptions);
+        //   // setSelectedOption(data.options[index].selectedOption);
+        //   // console.log(selectedOption);
+        //   // setOptionSets(data.options);
+        //   setOptionSets(prevOptionSets => {
+        //   const updatedOptionSets = [...prevOptionSets];
+        //   updatedOptionSets[0] = { ...updatedOptionSets[0],  options: data.options };
+        //   return updatedOptionSets;
+        // });
+        // }
 
       })
       .catch(error => {
