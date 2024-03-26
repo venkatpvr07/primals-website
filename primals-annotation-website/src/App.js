@@ -303,6 +303,7 @@ function App() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
+    setResetOptions(true);
     fetch('/dataset.json')
       .then(response => response.json())
       .then(dataset => {
@@ -347,7 +348,7 @@ function App() {
       }
       setResetOptions(false);
     }
-  },[resetOptions])
+  },[resetOptions, currentPage])
 
   useEffect(() => {
     fetch(`http://localhost:4000/getByID/${currentPage}`)
@@ -370,7 +371,8 @@ function App() {
         // });
         setData(data);
         if(data!=null && data.page===currentPage && data.optionSets) {
-          setOptionSets([{...data.optionSets[0]}])  
+          setOptionSets([{...data.optionSets[0]}])
+          setSavedPages([...savedPages, currentPage])
           if(data.optionSets.length === 2) {
               setOptionSets(prevOptionSets => {
                 const currOptionSets = [{...prevOptionSets[0]}]
@@ -420,12 +422,48 @@ function App() {
 //       });
 //   }
 
+useEffect(() => { 
+  if(optionSets.length==2)
+    setIsDuplicated(true);
+},[optionSets.length])
+
+useEffect(() => {
+  updateSavedPages();
+}, []);
+
+const updateSavedPages = async () => {
+  try {
+    const response = await fetch('http://localhost:4000/data');
+    if (!response.ok) {
+      throw new Error('Error fetching data');
+    }
+    const jsonData = await response.json();
+    console.log(jsonData);
+    const totalPages = jsonData.length;
+    const existingPages = [];
+    for (let i = 0; i < totalPages; i++) {
+      existingPages.push(jsonData[i].page);
+    }
+    setSavedPages(existingPages);
+  } catch (error) {
+    console.error('Error updating saved pages:', error);
+  }
+};
+
   const handleOptionChange = useCallback(function handleOptionChange(options, index) {
     console.log(options, index);
-    if(options[0]==='Bad')
+    if(options[0]==='Bad'){
       setDuplicateOption('Good');
-    else
+      setInstruction("You chose Bad. Now, choose one secondary from Dangerous, Dull and Mechanistic.")
+    }
+    else if (options[0] === 'Good') {
       setDuplicateOption('Bad');
+      setInstruction('You chose Good. Now, choose one secondary from Safe, Enticing and Alive.');
+    }
+    // if(options[0]==='Good')
+    // setInstruction("Good! Now, Choose one secondary primal good.")
+    // else
+    //   setDuplicateOption('Bad');
       const currentOption = options[0];
       const currentOptionSetObject = {options: currentOption}
     if(index === 0) {
@@ -441,8 +479,9 @@ function App() {
   }, []);
 
   const handleAdditionalOptionChange = useCallback(function handleAdditionalOptionChange(additionalOptions, index) {
-    
-      
+    console.log('additional option is: ', additionalOptions);
+    if(additionalOptions.length>0)
+    setInstruction('Now, choose one from the tertiaries available.');     
       setOptionSets(prevOptionSets => {
         let currentOptionSets = [{...prevOptionSets[0]}];
         if(index === 1)
@@ -453,6 +492,9 @@ function App() {
   }, []);
 
   const handleTreeOptionChange = (selectedOption, index) => {
+    console.log('tertiary is: ', selectedOption);
+    if(selectedOption.length>0)
+    setInstruction('Great! Now save your selections by clicking on Save Annotations button.');  
     setOptionSets(prevOptionSets => {
       let currentOptionSets = [{...prevOptionSets[0]}];
       if(index === 1)
@@ -467,6 +509,15 @@ function App() {
       !optionSets[0].options ||
       !optionSets[0].additionalOptions ||
       !optionSets[0].selectedOption
+    ) {
+      alert('Please select one primary, one secondary, and one tertiary primals before saving annotations.');
+      console.log("Please select one primary, one secondary, and one tertiary primals before saving annotations.");
+      return;
+    }
+    if(optionSets.length>1 && (
+      !optionSets[1].options ||
+      !optionSets[1].additionalOptions ||
+      !optionSets[1].selectedOption)
     ) {
       alert('Please select one primary, one secondary, and one tertiary primals before saving annotations.');
       console.log("Please select one primary, one secondary, and one tertiary primals before saving annotations.");
@@ -528,6 +579,7 @@ function App() {
       });
     
       if (response.ok) {
+        setInstruction('Done! You can go to the next page or add another set of annotations by clicking on Add Good / Add Bad button.'); 
         alert('Data saved successfully');
         console.log('Data saved successfully');
         setSavedPages([...savedPages, currentPage]);
@@ -588,6 +640,7 @@ function App() {
 
   const resetPageOptions = () =>{
      setResetOptions(true);
+     setInstruction('Choose  one of Good, Bad.')
   }
 
   return (
@@ -611,7 +664,7 @@ function App() {
             onAdditionalOptionChange={handleAdditionalOptionChange}
             onTreeOptionChange={handleTreeOptionChange}
             currentPage={currentPage}
-            resetOptions = {resetOptions} // Pass currentPage to OptionSet
+            resetOptions = {resetOptions}
             data = {data}
             optionSets = {optionSets}
           />

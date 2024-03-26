@@ -103,5 +103,45 @@
         "selectedOption": "Boring"
       }
     ]
+  },
+  {
+    "page": 9,
+    "optionSets": [
+      {
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      },
+      {
+        "options": "Bad",
+        "additionalOptions": "Dangerous",
+        "selectedOption": "Unacceptable"
+      }
+    ]
+  },
+  {
+    "page": 13,
+    "optionSets": [
+      {
+        "options": "Bad",
+        "additionalOptions": "Dull",
+        "selectedOption": "Unacceptable"
+      }
+    ]
+  },
+  {
+    "page": 14,
+    "optionSets": [
+      {
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      },
+      {
+        "options": "Bad",
+        "additionalOptions": "Dull",
+        "selectedOption": "Boring"
+      }
+    ]
   }
 ]
