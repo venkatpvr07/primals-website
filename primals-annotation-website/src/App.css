@@ -5,6 +5,24 @@
   resize: vertical; /* Allow vertical resizing */
 }
 
+/* Define UF's orange and blue colors */
+:root {
+  --uf-orange: #FF4F00;
+  --uf-blue: #0021A5;
+}
+
+/* Apply UF's blue color to a specific section */
+.blue-section {
+  background-color: var(--uf-blue);
+  color: white; /* Text color on blue background */
+}
+
+.instructions {
+  color: var(--uf-orange);
+}
+
+/* Add more styles as needed */
+
 .toplevel {
   display: flex; 
 	justify-content: center; 

@@ -301,6 +301,7 @@ function App() {
   const [duplicateOption, setDuplicateOption] = useState('Bad');
   const [instruction, setInstruction] = useState('Choose one of Good, Bad');
   const [data, setData] = useState(null);
+  const [showSubmit, setShowSubmit] = useState(false);
 
   useEffect(() => {
     setResetOptions(true);
@@ -421,6 +422,14 @@ function App() {
 //         console.error('Error retrieving data:', error);
 //       });
 //   }
+useEffect(() => {
+  // Check if the current page is the last page
+  if (currentPage === totalPages) {
+    setShowSubmit(true);
+  } else {
+    setShowSubmit(false);
+  }
+}, [currentPage, totalPages]);
 
 useEffect(() => { 
   if(optionSets.length==2)
@@ -583,6 +592,7 @@ const updateSavedPages = async () => {
         alert('Data saved successfully');
         console.log('Data saved successfully');
         setSavedPages([...savedPages, currentPage]);
+        console.log('total pages is: ', totalPages);
       } else {
         alert('Failed to save data');
         console.error('Failed to save data:', response.statusText);
@@ -638,6 +648,34 @@ const updateSavedPages = async () => {
     }
   };
 
+  const handleSubmit = async () => {
+    try {
+      if (!savedPages.includes(currentPage)) {
+        await handleSaveAnnotations(currentPage);
+        for (const optionSet of optionSets)
+        if(optionSet.options &&
+          optionSet.additionalOptions &&
+          optionSet.selectedOption) {
+            if (currentPage < totalPages) {
+              resetPageOptions();
+              setCurrentPage(currentPage + 1);
+            }
+          }
+          alert('Data saved. You reached the end, now you may close the browser.');
+      }
+  
+      // Navigate to the next page if not already on the last page
+      else if (currentPage < totalPages) {
+        resetPageOptions();
+        setCurrentPage(currentPage + 1);
+      }
+      } catch(error) {
+        console.error('Error in submit:', error);
+        alert('Error occurred while saving annotations. Check console for details.');
+      }
+    // Additional code to close the browser if needed
+  };
+
   const resetPageOptions = () =>{
      setResetOptions(true);
      setInstruction('Choose  one of Good, Bad.')
@@ -675,10 +713,19 @@ const updateSavedPages = async () => {
           <button className="footer-button" onClick={handleSaveAnnotations}>Save Annotations</button>
           <button onClick={handlePrev} disabled={currentPage === 1}>Prev</button>
           <span className="page-info">Page {currentPage} of {totalPages}</span>
-          <button onClick={handleNext} disabled={currentPage === totalPages}>Next</button>
-        </footer>
+          {showSubmit && (
+            <button onClick={handleSubmit} className="submit-button" disabled={savedPages.length===totalPages?false:true}>
+                Submit
+              </button>
+            )}
+          {!showSubmit && (
+            <button onClick={handleNext} className="next-button">
+                Next
+              </button>
+            )}
+          </footer>
       </div>
-      <div className="navbar" style={{ textAlign: 'left', backgroundColor: '#f0f0f0', padding: '10px' }}>
+      <div className="navbar" style={{ textAlign: 'left', backgroundColor: '#fafafa', padding: '10px' }}>
         <h3>Pages</h3>
         <ul style={{ listStyleType: 'none', padding: 0 }}>
           {pageData.map((page, index) => (

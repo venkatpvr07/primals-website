@@ -143,5 +143,30 @@
         "selectedOption": "Boring"
       }
     ]
+  },
+  {
+    "page": 18,
+    "optionSets": [
+      {
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
+  },
+  {
+    "page": 19,
+    "optionSets": [
+      {
+        "options": "Bad",
+        "additionalOptions": "Dull",
+        "selectedOption": "Boring"
+      },
+      {
+        "options": "Good",
+        "additionalOptions": "Enticing",
+        "selectedOption": "Interesting"
+      }
+    ]
   }
 ]
