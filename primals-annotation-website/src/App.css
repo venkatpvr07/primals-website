@@ -5,6 +5,24 @@
   resize: vertical; /* Allow vertical resizing */
 }
 
+/* Define UF's orange and blue colors */
+:root {
+  --uf-orange: #FF4F00;
+  --uf-blue: #0021A5;
+}
+
+/* Apply UF's blue color to a specific section */
+.blue-section {
+  background-color: var(--uf-blue);
+  color: white; /* Text color on blue background */
+}
+
+.instructions {
+  color: var(--uf-orange);
+}
+
+/* Add more styles as needed */
+
 .toplevel {
   display: flex; 
 	justify-content: center; 
@@ -74,14 +92,14 @@
   padding: 10px; /* Add padding to separate content from navbar */
 }
 
-.navbar ul {
-  list-style-type: none; /* Remove bullet points from the list */
-  padding: 0; /* Remove default padding */
+/* .navbar ul {
+  list-style-type: none; 
+  padding: 0;
 }
 
 .navbar li {
-  margin-bottom: 10px; /* Add space between navbar items */
-}
+  margin-bottom: 10px; 
+} */
 
 /* .navbar a {
   text-decoration: none; /* Remove underline from links */
